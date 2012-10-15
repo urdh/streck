@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block action %}{{ '/user/%s/buy' % user.barcode() }}{% endblock %}
+{% block title %}{{ user.name() }}{% endblock %}
+{% block body %}
+	{{ super() }}
+	<img src="{{ url_for('static', filename='users/%s' % user.picture()) }}" alt="{{ user.name() }}">
+	<dl>
+		<dt>Total skuld:</dt>
+		<dl>{{ user.debt() }}kr</dd>
+		{% for cat in user.debt_per_category() %}
+		<dt>Varav {{ cat['name'] }}:</dt>
+		<dl>{{ cat['debt'] }}kr</dd>
+		{% endfor %}
+	</dl>
+{% endblock %}

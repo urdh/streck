@@ -1,0 +1,15 @@
+<!doctype html>
+<title>Streck v{{ __version__ }}</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<div class="page">
+	<h1>Strecklista</h1>
+	{% for message in get_flashed_messages() %}
+	<p class="flash">{{ message }}</div>
+	{% endfor %}
+	<form action="{% block action %}{% endblock %}" method="post">
+		<p><input type="text" name="barcode" id="barcode"></p>
+	</form>
+	{% block body %}
+		<h2>{% block title %}{% endblock %}</h2>
+	{% endblock %}
+</div>

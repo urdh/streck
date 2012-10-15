@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block action %}/user{% endblock %}
+{% block title %}{{ product.name() }}{% endblock %}
+{% block body %}
+	{{ super() }}
+	<img src="{{ url_for('static', filename='products/%s' % product.picture()) }}" alt="{{ product.name() }}">
+	<dl>
+		<dt>Pris:</dt>
+		<dl>{{ product.price() }}</dd>
+		<dt>Kategori:</dt>
+		<dl>{{ product.category() }}</dd>
+	</dl>
+{% endblock %}
