@@ -4,14 +4,14 @@
 --drop table if exists transactions;
 create table users (
 	id integer primary key autoincrement,
-	barcode text not null,
+	barcode text unique not null,
 	name text not null,
 	image text,
 	notes text
 );
 create table products (
 	id integer primary key autoincrement,
-	barcode text not null,
+	barcode text unique not null,
 	name text not null,
 	price real not null,
 	category integer not null,
