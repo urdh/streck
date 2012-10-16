@@ -1,0 +1,20 @@
+body {
+	background: #4A4035;
+	color: #FF3E39;
+	text-align: center;
+}
+input {
+	background: #FFC79A;
+	color: #39273B;
+	border: 0;
+	font-size: 3em;
+}
+h1 {
+	font-size: 5em;
+	font-family: sans-serif;
+}
+.flash {
+	font-size: 2em;
+	color: #FFA139;
+	font-family: sans-serif;
+}
