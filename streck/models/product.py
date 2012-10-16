@@ -11,6 +11,13 @@ class Producs(object):
 	def barcode(self):
 		return self.bcode
 
+	def id(self):
+		if not self.exists():
+			return None
+		self.c.execute('select id from products where barcode = ?', [self.bcode])
+		r = self.c.fetchone()
+		return r['id']
+
 	def exists(self):
 		self.c.execute('select id from products where barcode = ?', [self.bcode])
 		r = self.c.fetchone()

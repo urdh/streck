@@ -10,6 +10,13 @@ class User(object):
 	
 	def barcode(self):
 		return self.bcode
+
+	def id(self):
+		if not self.exists():
+			return None
+		self.c.execute('select id from users where barcode = ?', [self.bcode])
+		r = self.c.fetchone()
+		return r['id']
 	
 	def exists(self):
 		self.c.execute('select id from users where barcode = ?', [self.bcode])
@@ -38,7 +45,10 @@ class User(object):
 		return r['debt']
 	
 	def debt_per_category(self):
-		pass # this statement will be horrible
+		if not self.exists():
+			return []
+		self.c.execute('select c.name as name, sum(t.price) as debt from transactions as t, users as u left join categories as c on t.category = c.id where u.barcode = ? and t.user = u.id group by t.category', [self.bcode])
+		return self.c.fetchall()
 
 	def __del__(self):
 		self.db.close()
