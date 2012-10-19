@@ -5,5 +5,5 @@ import streck.controller.admin.user
 import streck.controller.admin.product
 
 @app.route('/admin')
-def index():
+def admin_index():
 	return render_template('admin/index.html')
