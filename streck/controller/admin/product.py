@@ -3,11 +3,18 @@ from streck import app
 from streck.models.product import *
 from flask import render_template, request, flash, redirect
 
+def upload_product_picture(file):
+	if not file:
+		return None
+	fname = os.path.join('products/', secure_filename(file.filename))
+	file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+	return fname
+
 @app.route('/admin/product')
 def admin_product_list():
 	return render_template('admin/productlist.html', products=Product.all())
 
-@app.route('/admin/product/new',methods=['GET','POST'])
+@app.route('/admin/product/add',methods=['GET','POST'])
 def admin_add_product():
 	if request.method == 'GET':
 		return render_template('admin/productadd.html')
@@ -16,7 +23,12 @@ def admin_add_product():
 		if p.exists():
 			flash('Produktens ID är ej unikt!')
 			return redirect('/admin/product/add')
-		# add the product here
+		fname = upload_product_picture(request.files['picture'])
+		p = Product.add(request.form['barcode'], request.form['name'], request.form['price'], request.form['category'], fname)
+		if not p.exists():
+			flash('Användaren kunde inte läggas till!')
+			return redirect('/admin/product/add')
+		flash('Produkten "%s" tillagd.' % p.name())
 		return redirect('/admin/product/%s' % p.barcode())
 	return redirect('/admin/product')
 
@@ -35,6 +47,7 @@ def admin_edit_product(barcode):
 		if not p.exists():
 			flash('Produkten existerar inte!')
 			return redirect('/admin/product')
-		# update the product here
+		fname = upload_product_picture(request.files['picture'])
+		u.update(request.form['name'], request.form['price'], request.form['category'], fname)
 		return redirect('/admin/product/%s' % barcode)
 	return redirect('/admin/product')

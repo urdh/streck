@@ -47,3 +47,27 @@ class User(object):
 			return []
 		g.db.execute('select c.name as name, sum(t.price) as debt from transactions as t, users as u left join categories as c on t.category = c.id where u.barcode = ? and t.user = u.id group by t.category', [self.bcode])
 		return g.db.fetchall()
+
+	def update(self, name=None, picture=None):
+		if not self.exists():
+			return False
+		if name != None:
+			g.db.execute('update users set name = ? where barcode = ?', [name, barcode])
+			# we should check query success here
+		if picture != None:
+			g.db.execute('update users set image = ? where barcode = ?', [picture, barcode])
+			# we should check query success here
+		return True
+
+	@classmethod
+	def all(cls):
+		g.db.execute('select barcode from users')
+		return [User(r['barcode']) for r in g.db.fetchall()]
+
+	@classmethod
+	def add(cls, barcode, name, picture):
+		if User(barcode).exists():
+			return None
+		g.db.execute('insert into users values (null, ?, ?, ?, null)', [barcode, name, picture])
+		return User(barcode)
+

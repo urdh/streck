@@ -48,3 +48,39 @@ class Product(object):
 		g.db.execute('select c.name from products p, categories c where p.barcode = ? and c.id = p.category', [self.bcode])
 		r = g.db.fetchone()
 		return r['c.name']
+
+	def update(self, name=None, price=None, category=None, picture=None):
+		if not self.exists():
+			return False
+		if name != None:
+			g.db.execute('update products set name = ? where barcode = ?', [name, barcode])
+			# we should check query success here
+		if price != None:
+			g.db.execute('update products set price = ? where barcode = ?', [price, barcode])
+			# we should check query success here
+		if category != None:
+			g.db.execute('update products set category = ? where barcode = ?', [category, barcode])
+			# we should check query success here
+		if picture != None:
+			g.db.execute('update products set image = ? where barcode = ?', [picture, barcode])
+			# we should check query success here
+		return True
+
+	@classmethod
+	def all(cls):
+		g.db.execute('select barcode from products')
+		return [Product(r['barcode']) for r in g.db.fetchall()]
+
+	@classmethod
+	def add(cls, barcode, name, price, category, picture):
+		if Product(barcode).exists():
+			return None
+		g.db.execute('insert into products values (null, ?, ?, ?, ?, ?, null)', [barcode, name, price, category, picture])
+		return Product(barcode)
+
+	# This really ought to be in a separate model, but meh
+	@classmethod
+	def categories(cls):
+		g.db.execute('select id, name from categories')
+		return g.db.fetchall()
+		

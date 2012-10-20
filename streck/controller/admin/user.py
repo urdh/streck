@@ -3,11 +3,18 @@ from streck import app
 from streck.models.user import *
 from flask import render_template, request, flash, redirect
 
+def upload_user_picture(file):
+	if not file:
+		return None
+	fname = os.path.join('users/', secure_filename(file.filename))
+	file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+	return fname
+
 @app.route('/admin/user')
 def admin_user_list():
 	return render_template('admin/userlist.html', users=User.all())
 
-@app.route('/admin/user/new',methods=['GET','POST'])
+@app.route('/admin/user/add',methods=['GET','POST'])
 def admin_add_user():
 	if request.method == 'GET':
 		return render_template('admin/useradd.html')
@@ -16,7 +23,12 @@ def admin_add_user():
 		if u.exists():
 			flash('Användarens ID är ej unikt!')
 			return redirect('/admin/user/add')
-		# add the user here
+		fname = upload_user_picture(request.files['picture'])
+		u = User.add(request.form['barcode'], request.form['name'], fname)
+		if not u.exists():
+			flash('Användaren kunde inte läggas till!')
+			return redirect('/admin/user/add')
+		flash('Användaren "%s" tillagd.' % u.name())
 		return redirect('/admin/user/%s' % u.barcode())
 	return redirect('/admin/user')
 
@@ -35,6 +47,7 @@ def admin_edit_user(barcode):
 		if not u.exists():
 			flash('Användaren existerar inte!')
 			return redirect('/admin/user')
-		# update the user here
+		fname = upload_user_picture(request.files['picture'])
+		u.update(request.form['name'], fname)
 		return redirect('/admin/user/%s' % barcode)
 	return redirect('/admin/user')
