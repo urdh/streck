@@ -51,3 +51,24 @@ def admin_edit_user(barcode):
 		u.update(request.form['name'], fname)
 		return redirect('/admin/user/%s' % barcode)
 	return redirect('/admin/user')
+
+@app.route('/admin/user/<barcode>/enable')
+def admin_enable_user(barcode):
+	u = User(barcode)
+	if not u.exists():
+		flash('Användaren existerar inte!')
+		return redirect('/admin/user')
+	u.enable()
+	flash('Användaren är %s avstängd!' % (u.enabled() ? 'inte längre' : 'fortfarande'))
+	return redirect('/admin/user/%s' % barcode)
+
+@app.route('/admin/user/<barcode>/disable')
+def admin_enable_user(barcode):
+	u = User(barcode)
+	if not u.exists():
+		flash('Användaren existerar inte!')
+		return redirect('/admin/user')
+	u.disable()
+	flash('Användaren är %s avstängd!' % (u.enabled() ? 'fortfarande inte' : 'nu'))
+	return redirect('/admin/user/%s' % barcode)
+

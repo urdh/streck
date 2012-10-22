@@ -1,10 +1,11 @@
---drop table if exists users;
---drop table if exists products;
---drop table if exists categories;
---drop table if exists transactions;
+drop table if exists users;
+drop table if exists products;
+drop table if exists categories;
+drop table if exists transactions;
 create table users (
 	id integer primary key autoincrement,
 	barcode text unique not null,
+	enabled boolean not null,
 	name text not null,
 	image text,
 	notes text

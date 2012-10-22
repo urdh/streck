@@ -17,6 +17,9 @@ def transaction_arrival(user):
 			return redirect('/')
 		if p.barcode() == app.config['PAID_BARCODE']:
 			return redirect('/user/%s/paid' % u.barcode())
+		if not u.enabled():
+			flash('Användaren är avstängd!')
+			return redirect('/user/%s' % u.barcode())
 		if p.barcode() == app.config['UNDO_BARCODE']:
 			return redirect('/user/%s/undo' % u.barcode())
 		if not p.exists():
@@ -31,6 +34,9 @@ def transaction_action(user, product):
 	if not u.exists():
 		flash('Användaren existerar inte!')
 		return redirect('/')
+	if not u.enabled():
+		flash('Användaren är avstängd!')
+		return redirect('/user/%s' % u.barcode())
 	p = Product(product)
 	if not p.exists():
 		flash('Produkten existerar inte!')
@@ -61,6 +67,9 @@ def transaction_paid(user):
 	if not u.exists():
 		flash('Användaren existerar inte!')
 		return redirect('/')
+	if not u.enabled():
+		flash('Användaren är avstängd!')
+		return redirect('/user/%s' % u.barcode())
 	t = Transaction(u.barcode(), undo=True)
 	if t.perform():
 		flash('Ångrade köp för %s!', u.name())

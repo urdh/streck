@@ -48,6 +48,23 @@ class User(object):
 		g.db.execute('select c.name as name, sum(t.price) as debt from transactions as t, users as u left join categories as c on t.category = c.id where u.barcode = ? and t.user = u.id group by t.category', [self.bcode])
 		return g.db.fetchall()
 
+	def enabled(self):
+		if not self.exists():
+			return False
+		g.db.execute('select enabled from users where barcode = ?', [self.bcode])
+		return g.db.fetchone()['enabled'] == True
+
+	def disabled(self):
+		return not self.enabled()
+
+	def enable(self, e=True):
+		if self.exists():
+			g.db.execute('update users set enabled = ? where barcode = ?', [e, self.bcode])
+		return self.enabled()
+
+	def disable(self):
+		return self.enable(False)
+
 	def update(self, name=None, picture=None):
 		if not self.exists():
 			return False
