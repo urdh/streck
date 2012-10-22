@@ -4,6 +4,11 @@
 {% block body %}
 	{{ super() }}
 	<img src="{{ url_for('static', filename='users/%s' % user.picture()) }}" alt="{{ user.name() }}">
+	<ul class="transaction-list">
+	{% for transaction in user.transactions() %}
+		<li><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }})</span></li>
+	{% endfor %}
+	</ul>
 	<dl>
 		<dt>Total skuld:</dt>
 		<dl>{{ user.debt() }}kr</dd>

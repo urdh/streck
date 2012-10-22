@@ -48,6 +48,12 @@ class User(object):
 		g.db.execute('select c.name as name, sum(t.price) as debt from transactions as t, users as u left join categories as c on t.category = c.id where u.barcode = ? and t.user = u.id group by t.category', [self.bcode])
 		return g.db.fetchall()
 
+	def transactions(self):
+		if not self.exists():
+			return []
+		g.db.execute('select p.name as name, t.price as price, t.added as added, t.notes as notes from transactions as t, users as u left join products as p on t.product = p.id where u.barcode = ? and t.user = u.id', [self.bcode])
+		return g.db.fetchall()
+
 	def enabled(self):
 		if not self.exists():
 			return False
