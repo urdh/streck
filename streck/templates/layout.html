@@ -7,7 +7,7 @@
 	<p class="flash">{{ message }}</div>
 	{% endfor %}
 	<form action="{% block action %}{% endblock %}" method="post">
-		<p><input type="text" name="barcode" id="barcode"></p>
+		<p><input type="text" name="barcode" id="barcode" placeholder="Streckkod" autofocus></p>
 	</form>
 	{% block body %}
 		<h2>{% block title %}{% endblock %}</h2>
