@@ -4,6 +4,7 @@ from streck.models.user import *
 from streck.models.product import *
 from streck.models.transaction import *
 from flask import render_template, request, flash, redirect
+from flaskext.babel import gettext
 
 @app.route('/user/<user>/buy',methods=['POST'])
 def transaction_arrival(user):
@@ -64,4 +65,4 @@ def transaction_undo(user):
 	if t.perform():
 		return redirect('/user/%s?undone' % u.barcode())
 	return redirect('/error')
-	
+

@@ -1,0 +1,108 @@
+# English translations for Streck.
+# Copyright (C) 2012 Simon Sigurdhsson
+# This file is distributed under the same license as the Streck project.
+# Simon Sigurdhsson <Sigurdhsson@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version:  0.1\n"
+"Report-Msgid-Bugs-To: Sigurdhsson@gmail.com\n"
+"POT-Creation-Date: 2012-10-22 23:18+0200\n"
+"PO-Revision-Date: 2012-10-22 23:06+0200\n"
+"Last-Translator: Simon Sigurdhsson <Sigurdhsson@gmail.com>\n"
+"Language-Team: sv <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: controller/product.py:11
+msgid "Product/user does not exist!"
+msgstr "Produkten/användaren existerar inte!"
+
+#: controller/product.py:20 controller/transaction.py:26
+#: controller/transaction.py:42 controller/admin/product.py:39
+#: controller/admin/product.py:48
+msgid "Product does not exist!"
+msgstr "Produkten existerar inte!"
+
+#: controller/transaction.py:13 controller/transaction.py:35
+#: controller/transaction.py:55 controller/transaction.py:68
+#: controller/user.py:21 controller/admin/user.py:39
+#: controller/admin/user.py:48 controller/admin/user.py:59
+#: controller/admin/user.py:72
+msgid "User does not exist!"
+msgstr "Användaren existerar inte!"
+
+#: controller/transaction.py:21 controller/transaction.py:38
+#: controller/transaction.py:71
+msgid "User is disabled!"
+msgstr "Användaren är avstängd!"
+
+#: controller/transaction.py:46
+#, python-format
+msgid "Bought %(product)s!"
+msgstr "Köpte %(product)s!"
+
+#: controller/transaction.py:48 controller/transaction.py:61
+#: controller/transaction.py:77
+msgid "An error occurred!"
+msgstr "Ett fel inträffade!"
+
+#: controller/transaction.py:59
+#, python-format
+msgid "Emptied debt for %(name)s!"
+msgstr "Tömde strecklista för %(name)s!"
+
+#: controller/transaction.py:75
+#, python-format
+msgid "Undid transaction for %(name)s!"
+msgstr "Ångrade köp för %(name)s!"
+
+#: controller/admin/product.py:24
+msgid "Product ID not unique!"
+msgstr "Produkt-ID är inte unikt!"
+
+#: controller/admin/product.py:29
+msgid "Could not add product!"
+msgstr "Kunde inte lägga till produkt!"
+
+#: controller/admin/product.py:31
+#, python-format
+msgid "Product %(name)s added!"
+msgstr "Produkten %(name)s har lagts till!"
+
+#: controller/admin/user.py:24
+msgid "User ID not unique!"
+msgstr "Användar-ID är inte unikt!"
+
+#: controller/admin/user.py:29
+msgid "Could not add user!"
+msgstr "Kunde inte lägga till användare!"
+
+#: controller/admin/user.py:31
+#, python-format
+msgid "User %(name)s added!"
+msgstr "Användaren %(name)s har lagts till!"
+
+#: controller/admin/user.py:63
+#, fuzzy, python-format
+msgid "User %(name)s is no longer disabled!"
+msgstr "Användaren %(name)s är inte längre avstängd!"
+
+#: controller/admin/user.py:65
+#, fuzzy, python-format
+msgid "User %(name)s is still disabled!"
+msgstr "Användaren %(name)s är fortfarande avstängd!"
+
+#: controller/admin/user.py:76
+#, fuzzy, python-format
+msgid "User %(name)s is still enabled!"
+msgstr "Användaren %(name)s är fortfarande inte avstängd!"
+
+#: controller/admin/user.py:78
+#, fuzzy, python-format
+msgid "User %(name)s is no longer enabled!"
+msgstr "Användaren %(name)s är nu avstängd!"
+

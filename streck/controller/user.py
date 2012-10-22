@@ -4,6 +4,7 @@ from streck import app
 from streck.models.user import *
 from streck.models.product import *
 from flask import render_template, request, flash, redirect, send_file
+from flaskext.babel import gettext
 
 @app.route('/disabled')
 def user_is_disabled():
@@ -32,7 +33,7 @@ def show_user(barcode):
 	disabled = request.args.get('disabled', False)
 	u = User(barcode)
 	if not u.exists():
-		flash(u'Användaren existerar inte!')
+		flash(gettext(u'User does not exist!'))
 		return redirect('/')
 	if u.disabled():
 		return redirect('/disabled')
