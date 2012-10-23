@@ -18,7 +18,7 @@ def user_arrival():
 def show_user(barcode):
 	u = User(barcode)
 	if not u.exists():
-		flash('Användaren existerar inte!')
+		flash(u'Användaren existerar inte!')
 		return redirect('/')
 	return render_template('user.html', user=u)
 

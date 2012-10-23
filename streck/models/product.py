@@ -53,16 +53,16 @@ class Product(object):
 		if not self.exists():
 			return False
 		if name != None:
-			g.db.execute('update products set name = ? where barcode = ?', [name, barcode])
+			g.db.execute('update products set name = ? where barcode = ?', [name, self.bcode])
 			# we should check query success here
 		if price != None:
-			g.db.execute('update products set price = ? where barcode = ?', [price, barcode])
+			g.db.execute('update products set price = ? where barcode = ?', [price, self.bcode])
 			# we should check query success here
 		if category != None:
-			g.db.execute('update products set category = ? where barcode = ?', [category, barcode])
+			g.db.execute('update products set category = ? where barcode = ?', [category, self.bcode])
 			# we should check query success here
 		if picture != None:
-			g.db.execute('update products set image = ? where barcode = ?', [picture, barcode])
+			g.db.execute('update products set image = ? where barcode = ?', [picture, self.bcode])
 			# we should check query success here
 		return True
 
