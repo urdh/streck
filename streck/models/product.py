@@ -47,7 +47,7 @@ class Product(object):
 			return None
 		g.db.execute('select c.name from products p, categories c where p.barcode = ? and c.id = p.category', [self.bcode])
 		r = g.db.fetchone()
-		return r['c.name']
+		return r['name']
 
 	def update(self, name=None, price=None, category=None, picture=None):
 		if not self.exists():

@@ -2,7 +2,7 @@
 import sqlite3
 from flask import flash, g
 
-class Producs(object):
+class Transaction(object):
 	def __init__(self, user, product=None, price=None, undo=False, paid=False):
 		u = User(user)
 		self.user = u.id()

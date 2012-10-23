@@ -34,3 +34,5 @@ create table transactions (
 	foreign key(user) references user(id),
 	foreign key(product) references product(id)
 );
+insert into categories values (null, "Öl");
+insert into categories values (null, "Ickeöl");

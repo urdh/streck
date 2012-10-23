@@ -9,6 +9,7 @@ from streck.models.transaction import *
 @app.before_request
 def setup_db():
 	g._db = sqlite3.connect(app.config['DATABASE']);
+	g._db.row_factory = sqlite3.Row
 	g.db = g._db.cursor()
 
 @app.teardown_request
