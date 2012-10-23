@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3
+from streck.models.user import *
+from streck.models.product import *
 from flask import flash, g
 
 class Transaction(object):
@@ -7,7 +9,7 @@ class Transaction(object):
 		u = User(user)
 		self.user = u.id()
 		p = Product(product)
-		self.prod = p.id()
+		self.product = p.id()
 		self.price = p.price() if price == None else price
 		self.special = ''
 		if undo:
@@ -20,4 +22,6 @@ class Transaction(object):
 		if self.special == 'undo':
 			g.db.execute('delete from transactions order by id desc limit 1')
 		else:
-			g.db.execute('insert into transactions values (0, datetime("now"), ?, ?, ?, ?)', [self.user, self.product, self.price, self.special])
+			g.db.execute('insert into transactions values (null, datetime("now"), ?, ?, ?, ?)', [self.user, self.product, self.price, self.special])
+		# we should check query success here
+		return True

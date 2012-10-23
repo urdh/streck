@@ -12,8 +12,7 @@ def transaction_arrival(user):
 		if not u.exists():
 			flash(u'Användaren existerar inte!')
 			return redirect('/')
-		u = User(request.form['barcode'])
-		if u.exists():
+		if User(request.form['barcode']).exists():
 			return redirect('/user/%s' % u.barcode())
 		p = Product(request.form['barcode'])
 		if p.barcode() == app.config['LOGOUT_BARCODE']:
@@ -28,7 +27,7 @@ def transaction_arrival(user):
 		if not p.exists():
 			flash(u'Produkten existerar inte!')
 			return redirect('/user/%s' % u.barcode())
-		return redirect('/user/%s/buy/%s' % u.barcode(), p.barcode())
+		return redirect('/user/%s/buy/%s' % (u.barcode(), p.barcode()))
 	return redirect('/')
 
 @app.route('/user/<user>/buy/<product>')
@@ -46,7 +45,7 @@ def transaction_action(user, product):
 		return redirect('/user/%s' % u.barcode())
 	t = Transaction(u.barcode(), p.barcode(), p.price())
 	if t.perform():
-		flash(u'Köpte %s!', p.name)
+		flash(u'Köpte %s!' % p.name())
 		return redirect('/user/%s' % u.barcode())
 	flash(u'Ett fel uppstod!')
 	return redirect('/user/%s' % u.barcode())
