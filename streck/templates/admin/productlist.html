@@ -1,0 +1,12 @@
+{% extends "admin/layout.html" %}
+{% block title %}Produkter{% endblock %}
+{% block body %}
+	<p><a href="/">Tillbaks till strecklistan</a></p>
+	{{ super() }}
+	<p><a href="/admin/product/add">Lägg till ny produkt</a></p>
+	<ul class="admin-list">
+	{% for product in products %}
+		<li><a href="/admin/product/{{ product.barcode() }}">{{ product.name() }}</a></li>
+	{% endfor %}
+	</ul>
+{% endblock %}

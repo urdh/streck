@@ -21,14 +21,14 @@ def admin_add_user():
 	elif request.method == 'POST':
 		u = User(request.form['barcode'])
 		if u.exists():
-			flash('Användarens ID är ej unikt!')
+			flash(u'Användarens ID är ej unikt!')
 			return redirect('/admin/user/add')
-		fname = upload_user_picture(request.files['picture'])
+		fname = upload_user_picture(request.files.get('picture', None))
 		u = User.add(request.form['barcode'], request.form['name'], fname)
 		if not u.exists():
-			flash('Användaren kunde inte läggas till!')
+			flash(u'Användaren kunde inte läggas till!')
 			return redirect('/admin/user/add')
-		flash('Användaren "%s" tillagd.' % u.name())
+		flash(u'Användaren "%s" tillagd.' % u.name())
 		return redirect('/admin/user/%s' % u.barcode())
 	return redirect('/admin/user')
 
@@ -36,7 +36,7 @@ def admin_add_user():
 def admin_show_user(barcode):
 	u = User(barcode)
 	if not u.exists():
-		flash('Användaren existerar inte!')
+		flash(u'Användaren existerar inte!')
 		return redirect('/admin/user')
 	return render_template('admin/user.html', user=u)
 
@@ -45,9 +45,9 @@ def admin_edit_user(barcode):
 	if request.method == 'POST':
 		u = User(barcode)
 		if not u.exists():
-			flash('Användaren existerar inte!')
+			flash(u'Användaren existerar inte!')
 			return redirect('/admin/user')
-		fname = upload_user_picture(request.files['picture'])
+		fname = upload_user_picture(request.files.get('picture', None))
 		u.update(request.form['name'], fname)
 		return redirect('/admin/user/%s' % barcode)
 	return redirect('/admin/user')
@@ -56,19 +56,25 @@ def admin_edit_user(barcode):
 def admin_enable_user(barcode):
 	u = User(barcode)
 	if not u.exists():
-		flash('Användaren existerar inte!')
+		flash(u'Användaren existerar inte!')
 		return redirect('/admin/user')
 	u.enable()
-	flash('Användaren är %s avstängd!' % (u.enabled() ? 'inte längre' : 'fortfarande'))
+	if u.enabled():
+		flash(u'Användaren är inte längre avstängd!')
+	else:
+		flash(u'Användaren är fortfarande avstängd.')
 	return redirect('/admin/user/%s' % barcode)
 
 @app.route('/admin/user/<barcode>/disable')
-def admin_enable_user(barcode):
+def admin_disable_user(barcode):
 	u = User(barcode)
 	if not u.exists():
-		flash('Användaren existerar inte!')
+		flash(u'Användaren existerar inte!')
 		return redirect('/admin/user')
 	u.disable()
-	flash('Användaren är %s avstängd!' % (u.enabled() ? 'fortfarande inte' : 'nu'))
+	if u.enabled():
+		flash(u'Användaren är fortfarande inte längre avstängd.')
+	else:
+		flash(u'Användaren är nu avstängd!')
 	return redirect('/admin/user/%s' % barcode)
 

@@ -1,0 +1,10 @@
+{% extends "admin/layout.html" %}
+{% block title %}Administration{% endblock %}
+{% block body %}
+	{{ super() }}
+	<p>Välkommen till admin-interfacet. Välj något att administrera:</p>
+	<ul class="minimenu">
+		<li><a href="/admin/user">Användare</a></li>
+		<li><a href="/admin/product">Produkter</a></li>
+	</ul>
+{% endblock %}

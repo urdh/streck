@@ -1,0 +1,12 @@
+{% extends "admin/layout.html" %}
+{% block title %}Användare{% endblock %}
+{% block body %}
+	<p><a href="/">Tillbaks till strecklistan</a></p>
+	{{ super() }}
+	<p><a href="/admin/user/add">Lägg till ny användare</a></p>
+	<ul class="admin-list">
+	{% for user in users %}
+		<li><a href="/admin/user/{{ user.barcode() }}">{{ user.name() }}</a></li>
+	{% endfor %}
+	</ul>
+{% endblock %}

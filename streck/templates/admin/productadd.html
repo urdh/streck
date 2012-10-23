@@ -1,0 +1,20 @@
+{% extends "admin/layout.html" %}
+{% block title %}Lägg till produkt{% endblock %}
+{% block body %}
+	{{ super() }}
+	<p><a href="/admin/product">Tillbaks till listan</a></p>
+	<form action="/admin/product/add" method="post">
+		<p><label>Streckkod: <input type="text" name="barcode" required></label></p>
+		<p><label>Namn: <input type="text" name="name" required></label></p>
+		<p><label>Pris: <input type="number" name="price" min="0" required>kr</label></p>
+		<p><label>Kategori: <select name="category">
+		{% for category in categories %}
+			{{ category }}
+			{{ categories }}
+			<option value="{{ category['id'] }}">{{ category['name'] }}</option>
+		{% endfor %}
+		</select></label></p>
+		<p><label>Bild: <input type="file" name="picture"></label></p>
+		<p><button type="submit">Lägg till produkt</button></p>
+	</form>
+{% endblock %}
