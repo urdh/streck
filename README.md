@@ -5,6 +5,6 @@ A web-based system for buying stuff and paying later.
 
 ### Still to do
 
-* Stylish CSS
-* Timers for logging out etc. (redirects)
-* Factor out strings somehow? Maybe not. (Flask-babel might help)
+* Stylish CSS.
+* Documentation in this README.
+* Factor out strings somehow? See `babel` branch.

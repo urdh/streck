@@ -1,4 +1,8 @@
 {% extends "layout.html" %}
+{% block head %}
+	<meta http-equiv="refresh" content="15; URL=/">
+	super()
+{% endblock %}
 {% block action %}/user{% endblock %}
 {% block title %}{{ product.name() }}{% endblock %}
 {% block body %}
