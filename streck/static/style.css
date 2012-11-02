@@ -1,0 +1,53 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	line-height: 1.2em;
+	color: #fff;	
+	font-family: Verdana, Geneva, sans-serif;
+	list-style:none;
+}
+body {
+	background: #000;	
+}
+.page {
+	width: 60%;
+	margin: auto;
+	margin-top: 40px;
+	background: #444;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	padding: 30px;
+}
+h1 {
+	font-size: 2.2em;
+	text-transform:uppercase;
+		
+}
+h2 {
+	font-size: 1.6em;	
+}
+time {
+	font-style: italic;	
+}
+
+.transaction-list {
+	padding-left: 20px;	
+}
+dl {
+	padding-left: 30px;	
+}
+a {
+	text-decoration: none;
+	font-size: 1.2em;
+	color: #CCC;	
+}
+a:hover {
+	text-decoration: underline;	
+}
+form {
+	padding-left: 20px;	
+}
+input {
+	color: black !important;
+}

@@ -1,12 +1,14 @@
 <!doctype html>
 <title>{{ 'Streck v%s - Administration' % config['VERSION'] }}</title>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-<div class="page">
-	<h1>Administrera strecklista</h1>
-	{% for message in get_flashed_messages() %}
-	<p class="flash">{{ message }}</div>
-	{% endfor %}
-	{% block body %}
-		<h2>{% block title %}{% endblock %}</h2>
-	{% endblock %}
-</div>
+<body>
+	<div class="page">
+		<h1>Administrera strecklista</h1>
+		{% for message in get_flashed_messages() %}
+		<p class="flash">{{ message }}</p>
+		{% endfor %}
+		{% block body %}
+			<h2>{% block title %}{% endblock %}</h2>
+		{% endblock %}
+	</div>
+</body>
