@@ -3,6 +3,8 @@
 __version__ = '0.1'
 
 import sys, os, glob, ConfigParser, StringIO
+from streck import app
+import streck.models
 from streck.models import User, Product, Transaction
 # Need to set up a request contest for werkzeug first
 
@@ -11,7 +13,7 @@ def parse_inilike_file(f):
 	cp = ConfigParser.ConfigParser()
 	cp.readfp(StringIO.StringIO("[dummy]\n" + open(f).read()))
 	for item in cp.items('dummy'):
-		ret[item[0]] = item[1]
+		ret[item[0]] = unicode(item[1], "UTF-8")
 	return ret
 
 def import_users(userpath):
@@ -24,8 +26,9 @@ def import_users(userpath):
 			data['id'] = data['id'].replace('-EJ-BETALT','')
 			active = False
 		u = User.add(data['id'], data['name'], None)
-		if not u.exists():
+		if u == None or not u.exists():
 			print 'Could not add "%s"!' % data['name']
+			continue
 		if not active:
 			u.disable()
 
@@ -36,6 +39,9 @@ def import_transactions(userpath):
 	pass
 
 if __name__ == '__main__':
+	ctx = app.test_request_context()
+	ctx.push()
+	streck.models.setup_db()
 	if len(sys.argv) < 2:
 		sys.stderr.write('Usage: ./convert.py <old data path>')
 		sys.exit(1)
@@ -51,4 +57,5 @@ if __name__ == '__main__':
 	import_users(userpath)
 	import_products(productpath)
 	import_transactions(userpath)
+	ctx.pop()
 	sys.exit(0)
