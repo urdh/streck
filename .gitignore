@@ -29,3 +29,4 @@ pip-log.txt
 # Streck app local data
 streck.db
 pictures/
+old-data/
