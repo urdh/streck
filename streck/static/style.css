@@ -48,6 +48,6 @@ a:hover {
 form {
 	padding-left: 20px;	
 }
-input {
+input, button {
 	color: black !important;
 }
