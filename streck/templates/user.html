@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block head %}
 	<meta http-equiv="refresh" content="15; URL=/">
-	super()
+	{{ super() }}
 {% endblock %}
 {% block action %}{{ '/user/%s/buy' % user.barcode() }}{% endblock %}
 {% block title %}{{ user.name() }}{% endblock %}
