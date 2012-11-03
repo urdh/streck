@@ -3,9 +3,11 @@
 __version__ = '0.1'
 
 import sys, os, glob, ConfigParser, StringIO, csv
+from datetime import datetime
 from streck import app
+from flask import g
 import streck.models
-from streck.models import User, Product, Transaction
+from streck.models import User, Product
 
 def parse_inilike_file(f):
 	ret = {}
@@ -62,23 +64,18 @@ def import_transactions(userpath):
 		for line in data:
 			if len(line) < 4:
 				continue
-			time = int(line[0])
+			time = datetime.fromtimestamp(int(line[0])/1000)
 			flag = int(line[1])
 			u = User(line[2])
 			if flag == 0:
 				p = Product(line[3])
 				amt = float(line[4])
-				category = find_category_id(line[5])
-				if not Transaction(u.barcode(), product=p.barcode(), price=amt).perform():
-					print 'Could not add transaction!'
-					continue
+				g.db.execute('insert into transactions values (null, ?, ?, ?, ?, ?)', [time, u.id(), p.id(), amt, 'converted'])
 				print '%s bought "%s"!' % (u.name(), p.name())
 				continue
 			elif flag == 2:
 				amt = float(line[3])
-				if not Transaction(u.barcode(), paid=True).perform():
-					print 'Could not add transaction!'
-					continue
+				g.db.execute('insert into transactions values (null, ?, ?, ?, ?, ?)', [time, u.id(), Product(None).id(), -amt, 'converted pay'])
 				print '%s paid debt!' % u.name()
 			else:
 				print 'Unknown flag %s' % flag
