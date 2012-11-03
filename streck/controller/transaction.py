@@ -58,13 +58,13 @@ def transaction_paid(user):
 		return redirect('/')
 	t = Transaction(u.barcode(), paid=True)
 	if t.perform():
-		flash(u'Tömde strecklista för %s!', u.name())
+		flash(u'Tömde strecklista för %s!' % u.name())
 		return redirect('/user/%s' % u.barcode())
 	flash(u'Ett fel uppstod!')
 	return redirect('/user/%s' % u.barcode())
 
 @app.route('/user/<user>/undo')
-def transaction_paid(user):
+def transaction_undo(user):
 	u = User(user)
 	if not u.exists():
 		flash(u'Användaren existerar inte!')
@@ -74,7 +74,7 @@ def transaction_paid(user):
 		return redirect('/user/%s' % u.barcode())
 	t = Transaction(u.barcode(), undo=True)
 	if t.perform():
-		flash(u'Ångrade köp för %s!', u.name())
+		flash(u'Ångrade köp för %s!' % u.name())
 		return redirect('/user/%s' % u.barcode())
 	flash(u'Ett fel uppstod!')
 	return redirect('/user/%s' % u.barcode())
