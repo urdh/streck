@@ -37,7 +37,7 @@ class User(object):
 
 	def last_paid_id(self):
 		if not self.exists():
-			return 0.0;
+			return 0.0
 		g.db.execute('select t.id as id from transactions as t, users as u where u.barcode = ? and u.id = t.user and t.notes = "paid" order by id desc limit 1', [self.bcode])
 		r = g.db.fetchone()
 		if r == None:
@@ -46,9 +46,11 @@ class User(object):
 	
 	def debt(self):
 		if not self.exists():
-			return 0.0;
+			return 0.0
 		g.db.execute('select sum(t.price) as debt from transactions as t, users as u where t.user = u.id and u.barcode = ?', [self.bcode])
 		r = g.db.fetchone()
+		if r['debt'] == None:
+			return 0.0
 		return r['debt']
 	
 	def debt_per_category(self):
