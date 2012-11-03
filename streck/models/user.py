@@ -38,7 +38,7 @@ class User(object):
 	def last_paid_id(self):
 		if not self.exists():
 			return 0.0
-		g.db.execute('select t.id as id from transactions as t, users as u where u.barcode = ? and u.id = t.user and t.notes = "paid" order by id desc limit 1', [self.bcode])
+		g.db.execute('select t.id as id from transactions as t, users as u where u.barcode = ? and u.id = t.user and (t.notes = "paid" or t.price < 0) order by id desc limit 1', [self.bcode])
 		r = g.db.fetchone()
 		if r == None:
 			return -1
