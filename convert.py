@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 __version__ = '0.1'
 
-import sys, os, glob, ConfigParser, StringIO
+import sys, os, glob, ConfigParser, StringIO, csv
 from streck import app
 import streck.models
 from streck.models import User, Product, Transaction
-# Need to set up a request contest for werkzeug first
 
 def parse_inilike_file(f):
 	ret = {}
@@ -15,6 +14,15 @@ def parse_inilike_file(f):
 	for item in cp.items('dummy'):
 		ret[item[0]] = unicode(item[1], "UTF-8")
 	return ret
+
+def find_category_id(catname):
+	cats = Product.categories()
+	category = 2
+	for cat in cats:
+		if cat[1] == catname:
+			category = cat[0]
+			break
+	return category
 
 def import_users(userpath):
 	users = glob.iglob(os.path.join(userpath, '*/'))
@@ -27,16 +35,56 @@ def import_users(userpath):
 			active = False
 		u = User.add(data['id'], data['name'], None)
 		if u == None or not u.exists():
-			print 'Could not add "%s"!' % data['name']
+			print 'Could not add user "%s"!' % data['name']
 			continue
 		if not active:
 			u.disable()
 
+# NOT DONE YET
 def import_products(productpath):
-	pass
+	products = glob.iglob(os.path.join(productpath, '*/'))
+	cats = Product.categories()
+	for product in products:
+		productinfo = os.path.join(product, 'product-details.txt')
+		data = parse_inilike_file(productinfo)
+		category = find_category_id(data['type'])
+		p = Product.add(data['id'], data['name'], data['price'], category, None)
+		if p == None or not p.exists():
+			print 'Could not add product "%s"!' % data['name']
+			continue
 
 def import_transactions(userpath):
-	pass
+	users = glob.iglob(os.path.join(userpath, '*/'))
+	# Should probably bypass the Transaction interface.
+	for user in users:
+		history = os.path.join(user, 'history.txt')
+		data = csv.reader(open(history, 'r'), dialect='excel-tab')
+		for line in data:
+			if len(line) < 4:
+				continue
+			time = int(line[0])
+			flag = int(line[1])
+			u = User(line[2])
+			if flag == 0:
+				p = Product(line[3])
+				amt = float(line[4])
+				category = find_category_id(line[5])
+				if not Transaction(u.barcode(), product=p.barcode(), price=amt).perform():
+					print 'Could not add transaction!'
+					continue
+				print '%s bought "%s"!' % (u.name(), p.name())
+				continue
+			elif flag == 2:
+				amt = float(line[3])
+				if not Transaction(u.barcode(), paid=True).perform():
+					print 'Could not add transaction!'
+					continue
+				print '%s paid debt!' % u.name()
+			else:
+				print 'Unknown flag %s' % flag
+	# tab-separated, columns are:
+	# timestamp flag user-barcode, product-barcode/paid amount, price, type
+	# flag is *probably* 0 for buying and 2 for paying
 
 if __name__ == '__main__':
 	ctx = app.test_request_context()
