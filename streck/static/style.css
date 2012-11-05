@@ -1,53 +1,116 @@
-* {
-	margin: 0;
-	padding: 0;
-	font-size: 12px;
-	line-height: 1.2em;
-	color: #fff;	
+/* Basic styling */
+body {
+	line-height: 1.2em;	
+	font-family: Georgia, "Times New Roman", serif;
+	list-style:none;
+}
+h1, h2, h3, input, button {
+	line-height: 1.2em;	
 	font-family: Verdana, Geneva, sans-serif;
 	list-style:none;
 }
-body {
-	background: #000;	
+/* Top colors */
+.top {
+	background: #E5E0C3;	
+	color: #475345;
 }
-.page {
-	width: 60%;
-	margin: auto;
-	margin-top: 40px;
-	background: #444;
-	border-radius: 10px;
-	border: 1px solid #ccc;
-	padding: 30px;
+.top a {
+	color: #91815F;
+}
+.top a:hover {
+	color: #D2392B;
 }
 h1 {
-	font-size: 2.2em;
-	text-transform:uppercase;
-		
+	color: #D2392B;
 }
-h2 {
-	font-size: 1.6em;	
+/* Bottom colors */
+body, .bottom {
+	background: #475345;
+	color: #E5E0C3;
 }
-time {
-	font-style: italic;	
+.bottom a {
+	color: inherit;
 }
-
+.bottom a:hover {
+	color: #F7BC76;
+}
+/* Layouting */
+body {
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+}
+.top {
+	margin: 0 auto;
+	text-align: center;
+	padding: 1.5em;
+	padding-bottom: 3em;
+}
+.bottom {
+	padding: 1.5em;
+}
+.bottom>* {
+	margin: 1.2em auto;
+	width: 20em;
+}
+/* Font sizes */
+.bottom h2 {
+	font-size: 1.5em;
+	margin: 0 auto;
+	text-align: center;
+	font-weight: normal;
+}
+h1, #barcode {
+	font-size: 3em;
+	text-align: center;
+}
+/* User/product blocks */
+.user, .product {
+	width: 32em !important;
+}
+.user img, .product img {
+	height: 12em;
+	float: left;
+}
 .transaction-list {
-	padding-left: 20px;	
+	position: relative;
+	left: 2em;
+	font-size: .9em;
+	list-style: none;
 }
-dl {
-	padding-left: 30px;	
+.transaction-list time {
+	font-family: monospace;
+	font-size: .75em;
+	line-height: 1.6;
+	opacity: .5;
 }
-a {
-	text-decoration: none;
-	font-size: 1.2em;
-	color: #CCC;	
+.transaction-list .price {
+	position: relative;
+	left: -2em;
+	float: right;
+	display: inline-block;
+	background: #475345;
 }
-a:hover {
-	text-decoration: underline;	
+.user dl, .product dl {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: .9em;
 }
-form {
-	padding-left: 20px;	
+.user dl dt, .product dl dt {
+	display: block;
+	float: left;
+	font-weight: bold;
+	width: 8em;
 }
-input, button {
-	color: black !important;
+.user dl dd, .product dl dd {
+	display: inline-block;
+	width: auto;
+	margin-left: 0;
+}
+.user dd+*, .user dd+dt+* {
+	opacity: .5;
+}
+.product dl dt, .product dl dd {
+	width: 6em;
+	position: relative;
+	left: 2em;
 }

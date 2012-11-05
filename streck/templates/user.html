@@ -7,18 +7,20 @@
 {% block title %}{{ user.name() }}{% endblock %}
 {% block body %}
 	{{ super() }}
-	<img src="{{ url_for('static', filename='users/%s' % user.picture()) }}" alt="{{ user.name() }}">
-	<ul class="transaction-list">
-	{% for transaction in user.transactions()[-10:] %}
-		<li><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }}kr)</span></li>
-	{% endfor %}
-	</ul>
-	<dl>
-		<dt>Total skuld:</dt>
-		<dd>{{ user.debt() }}kr</dd>
-		{% for cat in user.debt_per_category() %}
-		<dt>Varav {{ cat['name'] }}:</dt>
-		<dd>{{ cat['debt'] }}kr</dd>
+	<div class="user">
+		<img src="{{ url_for('static', filename='users/%s' % user.picture()) }}" alt="{{ user.name() }}">
+		<ul class="transaction-list">
+		{% for transaction in user.transactions()[-10:] %}
+			<li><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }}kr)</span></li>
 		{% endfor %}
-	</dl>
+		</ul>
+		<dl>
+			<dt>Total skuld:</dt>
+			<dd>{{ user.debt() }}kr</dd>
+			{% for cat in user.debt_per_category() %}
+			<dt>Varav {{ cat['name'] }}:</dt>
+			<dd>{{ cat['debt'] }}kr</dd>
+			{% endfor %}
+		</dl>
+	</div>
 {% endblock %}
