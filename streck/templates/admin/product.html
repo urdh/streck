@@ -2,7 +2,9 @@
 {% block title %}{{ product.name() }}{% endblock %}
 {% block body %}
 	{{ super() }}
-	<p><a href="/admin/product">Tillbaks till listan</a></p>
+	<ul class="minimenu">
+		<li><a href="/admin/product">Bakåt</a></li>
+	</ul>
 	<form action="/admin/product/{{ product.barcode() }}/update" method="post">
 		<p><label>Streckkod: <input type="text" name="barcode" required value="{{ product.barcode() }}"></label></p>
 		<p><label>Namn: <input type="text" name="name" required value="{{ product.name() }}"></label></p>

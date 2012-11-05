@@ -2,7 +2,9 @@
 {% block title %}Lägg till användare{% endblock %}
 {% block body %}
 	{{ super() }}
-	<p><a href="/admin/user">Tillbaks till listan</a></p>
+	<ul class="minimenu">
+		<li><a href="/admin/user">Bakåt</a></li>
+	</ul>
 	<form action="/admin/user/add" method="post">
 		<p><label>Streckkod: <input type="text" name="barcode" required></label></p>
 		<p><label>Namn: <input type="text" name="name" required></label></p>

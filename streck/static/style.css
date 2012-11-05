@@ -100,6 +100,7 @@ h1, #barcode {
 	float: left;
 	font-weight: bold;
 	width: 8em;
+	clear: left;
 }
 .user dl dd, .product dl dd {
 	display: inline-block;
@@ -113,4 +114,28 @@ h1, #barcode {
 	width: 6em;
 	position: relative;
 	left: 2em;
+	clear: none !important;
+}
+/* menu buttons */
+.minimenu {
+	list-style: none;
+	text-align: center;
+	padding: 0;
+}
+.minimenu li {
+	display: inline-block;
+	margin: 0 1ex;
+	border-radius: .5ex;
+	background: #D2392B;
+	font-family: Verdana, Geneva, sans-serif;
+}
+.minimenu li a {
+	display: inline-block;
+	padding: .5ex;
+	border-radius: .5ex;
+	text-decoration: none;
+}
+.minimenu li:hover, .minimenu li a:hover {
+	background: #F7BC76;
+	color: #475345 !important;
 }

@@ -2,4 +2,8 @@
 {% block head %}{{ super() }}{% endblock %}
 {% block action %}/user{% endblock %}
 {% block title %}{% endblock %}
-{% block body %}<p><a href="/admin">Administration</a></p>{% endblock %}
+{% block body %}
+<ul class="minimenu">
+		<li><a href="/admin">Administration</a></li>
+	</ul>
+{% endblock %}
