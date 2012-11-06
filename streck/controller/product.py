@@ -21,6 +21,6 @@ def product_showcase(barcode):
 		return redirect('/')
 	return render_template('product.html', product=p)
 
-@app.route('/pictures/products/<filename>')
+@app.route('/static/products/<filename>')
 def product_picture(filename):
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'products/'), filename)

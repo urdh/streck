@@ -1,18 +1,39 @@
 {% extends "layout.html" %}
 {% block head %}
+	{% if bought != False or paid != False or undone != False %}
+	<meta http-equiv="refresh" content="3; URL=/user/{{ user.barcode() }}">
+	{% else %}
 	<meta http-equiv="refresh" content="15; URL=/">
+	{% endif %}
 	{{ super() }}
 {% endblock %}
 {% block action %}{{ '/user/%s/buy' % user.barcode() }}{% endblock %}
 {% block title %}{{ user.name() }}{% endblock %}
 {% block body %}
 	{{ super() }}
-	<div class="user">
+	<div class="user{% if disabled != False or user.disabled() %} disabled{% endif %}">
+		{% if disabled != False or user.disabled() %}
+		<img src="{{ url_for('static', filename='img/No.png') }}" alt="{{ user.name() }}">
+		{% elif bought != False %}
+		<img src="{{ url_for('static', filename='products/%s' % bought.picture()) }}" alt="{{ bought.name() }}">
+		{% elif paid != False or undone != False %}
+		<img src="{{ url_for('static', filename='img/Ok.png') }}" alt="{{ user.name() }}">
+		{% else %}
 		<img src="{{ url_for('static', filename='users/%s' % user.picture()) }}" alt="{{ user.name() }}">
+		{% endif %}
 		<ul class="transaction-list">
-		{% for transaction in user.transactions()[-10:] %}
+		{% if undone == False %}
+			{% set transaction = user.transactions()[-11] %}
+			<li><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }}kr)</span></li>
+		{% endif %}
+		{% for transaction in user.transactions()[-10:-2] %}
 			<li><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }}kr)</span></li>
 		{% endfor %}
+		{% set transaction = user.transactions()[-1] %}
+		<li{% if bought != False %} class="bought"{% endif %}><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }}kr)</span></li>
+		{% if undone != False %}
+			<li id="undo"><hr></li>
+		{% endif %}
 		</ul>
 		<dl>
 			<dt>Total skuld:</dt>

@@ -68,6 +68,9 @@ h1, #barcode {
 .user, .product {
 	width: 32em !important;
 }
+.user.disabled>* {
+	opacity: .5;
+}
 .user img, .product img {
 	height: 12em;
 	float: left;
@@ -91,21 +94,24 @@ h1, #barcode {
 	display: inline-block;
 	background: #475345;
 }
+.transaction-list .undone {
+	opacity: .5;
+}
+.transaction-list .bought {
+	font-weight: bold;
+}
 .user dl, .product dl {
 	font-family: Verdana, Geneva, sans-serif;
 	font-size: .9em;
 }
 .user dl dt, .product dl dt {
-	display: block;
-	float: left;
+	display: run-in;
 	font-weight: bold;
-	width: 8em;
-	clear: left;
+	padding-right: 1ex;
 }
 .user dl dd, .product dl dd {
-	display: inline-block;
+	display: block;
 	width: auto;
-	margin-left: 0;
 }
 .user dd+*, .user dd+dt+* {
 	opacity: .5;

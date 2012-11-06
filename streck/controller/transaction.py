@@ -10,7 +10,6 @@ def transaction_arrival(user):
 	if request.method == 'POST':
 		u = User(user)
 		if not u.exists():
-			flash(u'Användaren existerar inte!')
 			return redirect('/')
 		if User(request.form['barcode']).exists():
 			return redirect('/user/%s' % u.barcode())
@@ -20,12 +19,10 @@ def transaction_arrival(user):
 		if p.barcode() == app.config['PAID_BARCODE']:
 			return redirect('/user/%s/paid' % u.barcode())
 		if not u.enabled():
-			flash(u'Användaren är avstängd!')
-			return redirect('/user/%s' % u.barcode())
+			return redirect('/user/%s?disabled' % u.barcode())
 		if p.barcode() == app.config['UNDO_BARCODE']:
 			return redirect('/user/%s/undo' % u.barcode())
 		if not p.exists():
-			flash(u'Produkten existerar inte!')
 			return redirect('/user/%s' % u.barcode())
 		return redirect('/user/%s/buy/%s' % (u.barcode(), p.barcode()))
 	return redirect('/')
@@ -34,48 +31,36 @@ def transaction_arrival(user):
 def transaction_action(user, product):
 	u = User(user)
 	if not u.exists():
-		flash(u'Användaren existerar inte!')
 		return redirect('/')
 	if not u.enabled():
-		flash(u'Användaren är avstängd!')
-		return redirect('/user/%s' % u.barcode())
+		return redirect('/user/%s?disabled' % u.barcode())
 	p = Product(product)
 	if not p.exists():
-		flash(u'Produkten existerar inte!')
 		return redirect('/user/%s' % u.barcode())
 	t = Transaction(u.barcode(), p.barcode(), p.price())
 	if t.perform():
-		flash(u'Köpte %s!' % p.name())
-		return redirect('/user/%s' % u.barcode())
-	flash(u'Ett fel uppstod!')
-	return redirect('/user/%s' % u.barcode())
+		return redirect('/user/%s?bought=%s' % (u.barcode(), p.barcode()))
+	return redirect('/error')
 
 @app.route('/user/<user>/paid')
 def transaction_paid(user):
 	u = User(user)
 	if not u.exists():
-		flash(u'Användaren existerar inte!')
 		return redirect('/')
 	t = Transaction(u.barcode(), paid=True)
 	if t.perform():
-		flash(u'Tömde strecklista för %s!' % u.name())
-		return redirect('/user/%s' % u.barcode())
-	flash(u'Ett fel uppstod!')
-	return redirect('/user/%s' % u.barcode())
+		return redirect('/user/%s?paid' % u.barcode())
+	return redirect('/error')
 
 @app.route('/user/<user>/undo')
 def transaction_undo(user):
 	u = User(user)
 	if not u.exists():
-		flash(u'Användaren existerar inte!')
 		return redirect('/')
 	if not u.enabled():
-		flash(u'Användaren är avstängd!')
-		return redirect('/user/%s' % u.barcode())
+		return redirect('/user/%s?disabled' % u.barcode())
 	t = Transaction(u.barcode(), undo=True)
 	if t.perform():
-		flash(u'Ångrade köp för %s!' % u.name())
-		return redirect('/user/%s' % u.barcode())
-	flash(u'Ett fel uppstod!')
-	return redirect('/user/%s' % u.barcode())
+		return redirect('/user/%s?undone' % u.barcode())
+	return redirect('/error')
 	

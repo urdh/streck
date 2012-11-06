@@ -26,6 +26,8 @@ class User(object):
 			return None
 		g.db.execute('select image from users where barcode = ?', [self.bcode])
 		r = g.db.fetchone()
+		if r['image'] == None:
+			return '../img/NoneUser.png'
 		return r['image']
 	
 	def name(self):
