@@ -5,10 +5,10 @@
 	<ul class="minimenu">
 		<li><a href="/admin/product">Bakåt</a></li>
 	</ul>
-	<form action="/admin/product/add" method="post">
+	<form action="/admin/product/add" method="post" class="productform">
 		<p><label>Streckkod: <input type="text" name="barcode" required></label></p>
 		<p><label>Namn: <input type="text" name="name" required></label></p>
-		<p><label>Pris: <input type="number" name="price" min="0" required>kr</label></p>
+		<p><label id="price">Pris: <input type="number" name="price" min="0" required><span>kr</span></label></p>
 		<p><label>Kategori: <select name="category">
 		{% for category in categories %}
 			{{ category }}

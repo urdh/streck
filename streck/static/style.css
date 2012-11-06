@@ -139,3 +139,27 @@ h1, #barcode {
 	background: #F7BC76;
 	color: #475345 !important;
 }
+/* Administration forms */
+.userform label, .productform label {
+	width: 100%;
+	display: inline-block;
+	overflow: auto;
+	text-align: right;
+}
+.userform label input, .productform label input, .productform label select {
+	width: 65%;
+	margin-left: 1ex;
+}
+form button {
+	float: right;
+	clear: right;
+	width: 15em;
+	margin: .5em 0;
+}
+label#price input {
+	width: 57.5%;
+}
+label#price span {
+	width: 7.5%;
+	display: inline-block;
+}

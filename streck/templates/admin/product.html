@@ -5,10 +5,10 @@
 	<ul class="minimenu">
 		<li><a href="/admin/product">Bakåt</a></li>
 	</ul>
-	<form action="/admin/product/{{ product.barcode() }}/update" method="post">
+	<form action="/admin/product/{{ product.barcode() }}/update" method="post" class="productform">
 		<p><label>Streckkod: <input type="text" name="barcode" required value="{{ product.barcode() }}"></label></p>
 		<p><label>Namn: <input type="text" name="name" required value="{{ product.name() }}"></label></p>
-		<p><label>Pris: <input type="number" name="price" min="0" required value="{{ product.price() }}">kr</label></p>
+		<p><label id="price">Pris: <input type="number" name="price" min="0" required value="{{ product.price() }}"><span>kr</span></label></p>
 		<p><label>Kategori: <select name="category">
 		{% for category in product.categories() %}
 			<option{% if category['name'] == product.category() %} selected{% endif %} value="{{ category['id'] }}">{{ category['name'] }}</option>
