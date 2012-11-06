@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 {% endblock %}
 <body>
-	<div class="page">
+	<div class="top">
 		<h1>Strecklista</h1>
 		{% for message in get_flashed_messages() %}
 		<p class="flash">{{ message }}</p>
@@ -12,6 +12,8 @@
 		<form action="{% block action %}{% endblock %}" method="post">
 			<p><input type="text" name="barcode" id="barcode" placeholder="Streckkod" autofocus></p>
 		</form>
+	</div>
+	<div class="bottom">
 		{% block body %}
 			<h2>{% block title %}{% endblock %}</h2>
 		{% endblock %}
