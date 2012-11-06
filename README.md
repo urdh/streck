@@ -6,6 +6,8 @@ There is no focus on security (the administration interface is not password prot
 
 There is basic category support (without administration interface), and it is possible to edit, add and disable users from the administration interface. Products are also managed through a simple interface.
 
+[flask]: http://flask.pocoo.org
+
 ## Using streck
 
 Using streck could be difficult, but shouldn't be. Make sure you have the dependencies (Python, Flask and SQLite3) and the rest should be easy. Flask and SQLite3 are easily installed with `pip`:
@@ -56,7 +58,7 @@ Pull requests are best made from separate branches (i.e. one branch per request/
 
 ## Planned improvements
 
-* Better UI/CSS. This is in progress, see the `restyle` branch.
+* More obvious visual cues when buying things - possibly a detour through the product page or displaying the product image for a short while after the purchase. This is in progress, see the `visual-buy` branch.
 * Internationalization/translation support. This is on hold, see the `babel` branch.
 
 ## License
