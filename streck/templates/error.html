@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block head %}
+	<meta http-equiv="refresh" content="5; URL=/">
+	{{ super() }}
+{% endblock %}
+{% block action %}/user{% endblock %}
+{% block title %}Ett fel uppstod!{% endblock %}
+{% block body %}{{ super() }}{% endblock %}

@@ -58,7 +58,6 @@ Pull requests are best made from separate branches (i.e. one branch per request/
 
 ## Planned improvements
 
-* More obvious visual cues when buying things - possibly a detour through the product page or displaying the product image for a short while after the purchase. This is in progress, see the `visual-buy` branch.
 * Internationalization/translation support. This is on hold, see the `babel` branch.
 
 ## License

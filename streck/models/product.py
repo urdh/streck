@@ -26,6 +26,8 @@ class Product(object):
 			return None
 		g.db.execute('select image from products where barcode = ?', [self.bcode])
 		r = g.db.fetchone()
+		if r['image'] == None:
+			return '../img/NoneProduct.png'
 		return r['image']
 
 	def name(self):
