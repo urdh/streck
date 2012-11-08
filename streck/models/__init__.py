@@ -4,6 +4,7 @@ from streck import app
 from streck.models.user import *
 from streck.models.product import *
 from streck.models.transaction import *
+from streck.models.stats import *
 
 # on request init
 @app.before_request

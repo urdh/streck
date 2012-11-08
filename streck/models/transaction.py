@@ -2,7 +2,7 @@
 import sqlite3
 from streck.models.user import *
 from streck.models.product import *
-from flask import flash, g
+from flask import g
 
 class Transaction(object):
 	def __init__(self, user, product=None, price=None, undo=False, paid=False):
