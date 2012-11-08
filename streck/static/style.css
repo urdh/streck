@@ -169,3 +169,11 @@ label#price span {
 	width: 7.5%;
 	display: inline-block;
 }
+/* blech */
+.stats {
+	font-size: 0.9em;
+	text-align: justify;
+}
+#graph {
+	background: white !important;
+}

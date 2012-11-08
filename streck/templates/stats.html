@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block head %}
+	{{ super() }}
+	<script src="{{ url_for('static', filename='dygraph-combined.js') }}"></script>
+{% endblock %}
+{% block action %}/user{% endblock %}
+{% block title %}Statistik{% endblock %}
+{% block body %}
+	{{ super() }}
+	{% set topprod = stats.top_product() %}
+	{% set topdebt = stats.top_user_debt() %}
+	{% set toptotal = stats.top_user_total() %}
+	<p class="stats">Den mest populära produkten är <strong>{{ topprod[0] }}</strong>, som har streckats <em>{{ topprod[1] }}</em> gånger. Högst streckskuld just nu har <strong>{{ topdebt.name() }}</strong> med <em>{{ topdebt.debt() }}kr</em>. <strong>{{ toptotal[0] }}</strong> har streckat mest genom tiderna, totalt <em>{{ toptotal[1] }}kr</em>!</p>
+	<p>De senaste fyra veckorna har det streckats för <em>{{ stats.total_four_weeks() }}</em>:</p>
+	<div id="graph"></div>
+	<script>
+		var to = new Date();
+		var from = new Date(to.getTime() - (28*60*60*24*1000));
+		g2 = new Dygraph(
+			document.getElementById("graph"),
+			"/stats/timeseries.csv", // path to CSV file
+			{dateWindow:[from, to]}
+		);
+	</script>
+{% endblock %}

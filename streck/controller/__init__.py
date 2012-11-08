@@ -5,6 +5,7 @@ import streck.controller.user
 import streck.controller.product
 import streck.controller.transaction
 import streck.controller.admin
+import streck.controller.stats
 
 @app.route('/')
 def index():

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlite3
-from flask import flash, g
+from flask import g
 
 class Product(object):
 	def __init__(self, barcode):
