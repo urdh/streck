@@ -59,9 +59,6 @@ Pull requests are best made from separate branches (i.e. one branch per request/
 ## Planned improvements
 
 * Internationalization/translation support. This is on hold, see the `babel` branch.
-* Statistics including most popular product, most avid user and timeseries graphs generated with [dygraphs][dygraphs]. See the `stats` branch.
-
-[dygraphs]: https://github.com/danvk/dygraphs
 
 ## License
 
