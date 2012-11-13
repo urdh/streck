@@ -80,6 +80,7 @@ h1, #barcode {
 	left: 2em;
 	font-size: .9em;
 	list-style: none;
+	height: 13.3em;
 }
 .transaction-list time {
 	font-family: monospace;

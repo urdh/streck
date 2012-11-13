@@ -59,7 +59,6 @@ Pull requests are best made from separate branches (i.e. one branch per request/
 ## Planned improvements
 
 * Internationalization/translation support. This is on hold, see the `babel` branch.
-* Fix bug: `UndefinedError: list object has no element -11` when visiting a user with less transactions than 11 or 10. See the `bugfix-transactionlist` branch. Fairly critical.
 
 ## License
 

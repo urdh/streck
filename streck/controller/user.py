@@ -19,8 +19,6 @@ def user_arrival():
 def show_user(barcode):
 	undone = request.args.get('undone', False)
 	bought = Product(request.args.get('bought', None))
-	print bought
-	print bought.name()
 	if not bought.exists():
 		bought = False
 	paid = request.args.get('paid', False)
