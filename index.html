@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>autobrew</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+<body>
+    <header>
+       <h1>streck</h1>
+       <h2>A web-based system for buying stuff and paying later</h2>
+    </header>
+    <p>Streck is a system implementing a basic credit-based sales terminal. It is written in Python using the <a href="http://flask.pocoo.org">Flask</a> framework, but is not intended to be served publically. Instead, it is supposed to run locally and served to a local browser only.</p>
+    <p>There is no focus on security (the administration interface is not password protected, and no measures to stop XSS issues and similar are taken) since the intended environment shouldn&rsquo;t require this.</p>
+    <p>There is basic category support (without administration interface), and it is possible to edit, add and disable users from the administration interface. Products are also managed through a simple interface.</p>
+    <h2>Using streck</h2>
+    <p>Using streck could be difficult, but shouldn&rsquo;t be. Make sure you have the dependencies (Python, Flask and SQLite3) and the rest should be easy. Flask and SQLite3 are easily installed with <code>pip</code>:</p>
+    <pre><code>pip install Flask sqlite3</code></pre>
+    <h3>Getting started</h3>
+    <p>Start by cloning this repository:</p>
+    <pre><code>git clone https://github.com/urdh/streck.git</code></pre>
+    <p>Now, make sure to create the database you&rsquo;ll be running with (by default, this resides in the current working directory):</p>
+    <pre><code>sqlite3 streck.db &lt; streck/schema.sql</code></pre>
+    <p>Great! Now, run <code>streck.py</code> and use your browser to add products and users:</p>
+    <pre><code>./streck.py</code></pre>
+    <h3>Configuration</h3>
+    <p>Configuration is done by editing <code>streck/__init__.py</code> to set the proper application variables (this may change in the future, subject to popular demand). The following options are available:</p>
+    <pre><code>app.config['DATABASE'] = './streck.db'      # Location of database
+app.config['PAID_BARCODE'] = 'BETALT'       # Barcode used to reset (or "pay") a user debt
+app.config['UNDO_BARCODE'] = 'undo'         # Barcode used to undo a purchase
+app.config['LOGOUT_BARCODE'] = 'log out'    # Barcode used to log users out (this happens automatically after 15 seconds or when another user logs in anyway)
+app.config['UPLOAD_FOLDER'] = './pictures/' # Location of uploaded images</code></pre>
+    <p>You could also change the secret key; this affects cookies and should not be relevant if you&rsquo;re running streck in a local environment. Session cookies are only used to flash messages at the user.</p>
+    <h3>Using the program</h3>
+    <p>Streck is fairly simple to use, basically only requiring a cheap computer and a USB barcode reader (as well as mouse/keyboard for administration).</p>
+    <p>To buy things, a user first scans the barcode that identifies him and logs him in. Then, the user scans the barcode of whatever he wants to buy. It&rsquo;s as simple as that. Products may also be scanned without being logged in, displaying their price.</p>
+    <h3>The conversion tool</h3>
+    <p>The conversion tool included in the repository, <code>./convert.py</code>, converts data from an earlier, Java-based software solving a similar problem. That software is not publically available, and thus the conversion tool will probably not be very useful to you. Just ignore it.</p>
+    <h2>Contributing</h2>
+    <p>All development of Streck is done <a href="http://github.com/urdh/streck">on Github</a>. If you&rsquo;d like to contribute, please raise issues and submit pull requests using the Github interface.</p>
+    <p>Pull requests are best made from separate branches (i.e. one branch per request/feature), not from <code>master</code>. Pull requests also imply that you agree to licensing your code under the relevant license.</p>
+    <h2>Planned improvements</h2>
+    <ul>
+    <li>Internationalization/translation support. This is on hold, see the <code>babel</code> branch.</li>
+    </ul>
+    <footer>
+        <p>This project by <a href="http://urdh.github.com/">me</a> is hosted by <a href="http://github.com/urdh/streck">Github</a>.</p>
+    </footer>
+    <a href="https://github.com/urdh/streck"><img style="position: absolute; top: 0; right: 0; border: 0;" src="github.png" alt="Fork me on GitHub"></a>
+</body>
+</html>
