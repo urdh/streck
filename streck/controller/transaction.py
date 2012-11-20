@@ -11,8 +11,9 @@ def transaction_arrival(user):
 		u = User(user)
 		if not u.exists():
 			return redirect('/')
-		if User(request.form['barcode']).exists():
-			return redirect('/user/%s' % u.barcode())
+		p = User(request.form['barcode'])
+		if p.exists():
+			return redirect('/user/%s' % p.barcode())
 		p = Product(request.form['barcode'])
 		if p.barcode() == app.config['LOGOUT_BARCODE']:
 			return redirect('/')
