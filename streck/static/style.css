@@ -73,6 +73,7 @@ h1, #barcode {
 }
 .user img, .product img {
 	height: 12em;
+	width: 12em;
 	float: left;
 }
 .transaction-list {
@@ -105,6 +106,9 @@ h1, #barcode {
 	font-family: Verdana, Geneva, sans-serif;
 	font-size: .9em;
 }
+.product dl {
+	margin-left: 12em;
+}
 .user dl dt, .product dl dt {
 	display: run-in;
 	font-weight: bold;
@@ -116,12 +120,6 @@ h1, #barcode {
 }
 .user dd+*, .user dd+dt+* {
 	opacity: .5;
-}
-.product dl dt, .product dl dd {
-	width: 6em;
-	position: relative;
-	left: 2em;
-	clear: none !important;
 }
 /* menu buttons */
 .minimenu {

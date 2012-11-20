@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from os import path, getcwd
 from streck import app
 from streck.models.product import *
 from flask import render_template, request, flash, redirect, send_from_directory
@@ -21,6 +22,6 @@ def product_showcase(barcode):
 		return redirect('/')
 	return render_template('product.html', product=p)
 
-@app.route('/static/products/<filename>')
+@app.route('/images/products/<path:filename>')
 def product_picture(filename):
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'products/'), filename)
+	return send_from_directory(path.join(app.config['UPLOAD_FOLDER'], 'products/'), filename)

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from os import path
 from streck import app
 from streck.models.user import *
 from streck.models.product import *
@@ -29,6 +30,6 @@ def show_user(barcode):
 		return redirect('/')
 	return render_template('user.html', user=u, undone=undone, bought=bought, paid=paid, disabled=disabled)
 
-@app.route('/static/users/<filename>')
-def product_picture(filename):
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'users/'), filename)
+@app.route('/images/users/<filename>')
+def user_picture(filename):
+    return send_from_directory(path.join(app.config['UPLOAD_FOLDER'], 'users/'), filename)

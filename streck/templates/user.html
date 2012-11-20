@@ -19,7 +19,7 @@
 		{% elif paid != False or undone != False %}
 		<img src="{{ url_for('static', filename='img/Ok.png') }}" alt="{{ user.name() }}">
 		{% else %}
-		<img src="{{ url_for('static', filename='users/%s' % user.picture()) }}" alt="{{ user.name() }}">
+		<img src="/images/users/{{ user.picture() }}" alt="{{ user.name() }}">
 		{% endif %}
 		<ul class="transaction-list">
 		{% set n = user.transactions().__len__() %}

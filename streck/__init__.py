@@ -4,7 +4,7 @@ __version__ = '1.0'
 from flask import Flask
 app = Flask('streck')
 app.config['VERSION'] = __version__
-app.config['DATABASE'] = './streck.db'
+app.config['DATABASE'] = './streck/streck.db'
 app.config['PAID_BARCODE'] = 'BETALT'
 app.config['UNDO_BARCODE'] = 'undo'
 app.config['LOGOUT_BARCODE'] = 'log out'

@@ -30,3 +30,5 @@ pip-log.txt
 streck.db
 pictures/
 old-data/
+streck/streck.db
+streck/pictures

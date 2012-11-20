@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from os import path
 from streck import app
 from streck.models.product import *
 from flask import render_template, request, flash, redirect
@@ -6,8 +7,8 @@ from flask import render_template, request, flash, redirect
 def upload_product_picture(file):
 	if not file:
 		return None
-	fname = os.path.join('products/', secure_filename(file.filename))
-	file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+	fname = path.join('products/', secure_filename(file.filename))
+	file.save(path.join(app.config['UPLOAD_FOLDER'], fname))
 	return fname
 
 @app.route('/admin/product')

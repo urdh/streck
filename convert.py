@@ -35,14 +35,13 @@ def import_users(userpath):
 		if data['id'].find('-EJ-BETALT') != -1:
 			data['id'] = data['id'].replace('-EJ-BETALT','')
 			active = False
-		u = User.add(data['id'], data['name'], None)
+		u = User.add(data['id'], data['name'], ('oldimg-%s' % data['image']))
 		if u == None or not u.exists():
 			print 'Could not add user "%s"!' % data['name']
 			continue
 		if not active:
 			u.disable()
 
-# NOT DONE YET
 def import_products(productpath):
 	products = glob.iglob(os.path.join(productpath, '*/'))
 	cats = Product.categories()
@@ -50,14 +49,13 @@ def import_products(productpath):
 		productinfo = os.path.join(product, 'product-details.txt')
 		data = parse_inilike_file(productinfo)
 		category = find_category_id(data['type'])
-		p = Product.add(data['id'], data['name'], data['price'], category, None)
+		p = Product.add(data['id'], data['name'], data['price'], category, ('oldimg-%s' % data['image']))
 		if p == None or not p.exists():
 			print 'Could not add product "%s"!' % data['name']
 			continue
 
 def import_transactions(userpath):
 	users = glob.iglob(os.path.join(userpath, '*/'))
-	# Should probably bypass the Transaction interface.
 	for user in users:
 		history = os.path.join(user, 'history.txt')
 		data = csv.reader(open(history, 'r'), dialect='excel-tab')
