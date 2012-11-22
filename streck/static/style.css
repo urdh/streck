@@ -105,9 +105,10 @@ h1, #barcode {
 .user dl, .product dl {
 	font-family: Verdana, Geneva, sans-serif;
 	font-size: 1.5em;
+	line-height: 1.2;
 }
 .product dl {
-	margin-left: 12em;
+	margin-left: 7.2em;
 }
 .user dl dt, .product dl dt {
 	display: run-in;
@@ -117,6 +118,8 @@ h1, #barcode {
 .user dl dd, .product dl dd {
 	display: block;
 	width: auto;
+	text-indent: 0;
+	padding: 0;
 }
 .user dd+*, .user dd+dt+* {
 	opacity: .5;
