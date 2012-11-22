@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from os import path
+from os import path, getcwd
 from streck import app
 from streck.models.user import *
 from streck.models.product import *
-from flask import render_template, request, flash, redirect, send_from_directory
+from flask import render_template, request, flash, redirect, send_file
 
 @app.route('/user',methods=['POST'])
 def user_arrival():
@@ -30,6 +30,6 @@ def show_user(barcode):
 		return redirect('/')
 	return render_template('user.html', user=u, undone=undone, bought=bought, paid=paid, disabled=disabled)
 
-@app.route('/images/users/<filename>')
+@app.route('/images/users/<path:filename>')
 def user_picture(filename):
-    return send_from_directory(path.join(app.config['UPLOAD_FOLDER'], 'users/'), filename)
+	return send_file(path.join(app.config['UPLOAD_FOLDER'], 'users/', filename)) # unsafe!

@@ -2,7 +2,7 @@
 from os import path, getcwd
 from streck import app
 from streck.models.product import *
-from flask import render_template, request, flash, redirect, send_from_directory
+from flask import render_template, request, flash, redirect, send_file
 
 @app.route('/product',methods=['POST'])
 def product_arrival():
@@ -24,4 +24,4 @@ def product_showcase(barcode):
 
 @app.route('/images/products/<path:filename>')
 def product_picture(filename):
-	return send_from_directory(path.join(app.config['UPLOAD_FOLDER'], 'products/'), filename)
+	return send_file(path.join(app.config['UPLOAD_FOLDER'], 'products/', filename)) # unsafe!
