@@ -9,6 +9,11 @@
 	{{ super() }}
 	<div class="product">
 		<img src="/images/products/{{ product.picture() }}" alt="{{ product.name() }}">
+		<ul class="transaction-list">
+		{% for pair in product.toplist()%}
+			<li>{{ pair[0].name() }} <span class="price">{{ pair[1] }}st</span></li>
+		{% endfor %}
+		</ul>
 		<dl>
 			<dt>Pris:</dt>
 			<dd>{{ product.price() }}kr</dd>

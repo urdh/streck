@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 from flask import g
+from streck.models.user import *
 
 class Product(object):
 	def __init__(self, barcode):
@@ -67,6 +68,10 @@ class Product(object):
 			g.db.execute('update products set image = ? where barcode = ?', [picture, self.bcode])
 			# we should check query success here
 		return True
+
+	def toplist(self):
+		g.db.execute('select u.barcode, count(t.id) as total from users as u, transactions as t, products as p where t.product = p.id and p.barcode = ? and t.user = u.id group by t.user order by total desc limit 10', [self.bcode])
+		return [(User(r['barcode']), r['total']) for r in g.db.fetchall()]
 
 	@classmethod
 	def all(cls):
