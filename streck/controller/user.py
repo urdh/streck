@@ -5,6 +5,10 @@ from streck.models.user import *
 from streck.models.product import *
 from flask import render_template, request, flash, redirect, send_file
 
+@app.route('/disabled')
+def user_is_disabled():
+	return render_template('no.html')
+
 @app.route('/user',methods=['POST'])
 def user_arrival():
 	if request.method == 'POST':
@@ -13,6 +17,8 @@ def user_arrival():
 			return redirect('/')
 		if not u.exists():
 			return redirect('/product/%s' % u.barcode())
+		if u.disabled():
+			return redirect('/disabled')
 		return redirect('/user/%s' % u.barcode())
 	return redirect('/')
 
@@ -28,6 +34,8 @@ def show_user(barcode):
 	if not u.exists():
 		flash(u'Användaren existerar inte!')
 		return redirect('/')
+	if u.disabled():
+		return redirect('/disabled')
 	return render_template('user.html', user=u, undone=undone, bought=bought, paid=paid, disabled=disabled)
 
 @app.route('/images/users/<path:filename>')

@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block head %}
+	<meta http-equiv="refresh" content="5; URL=/">
+	{{ super() }}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='no.css') }}">
+{% endblock %}
+{% block action %}/disabled{% endblock %}
+{% block title %}Nej!{% endblock %}
+{% block body %}
+	<h1>Nej!</h1>
+	<p>Du får tyvärr inte strecka.<br>Kontakta din kassör.</p>
+{% endblock %}
