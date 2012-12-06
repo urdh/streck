@@ -1,0 +1,24 @@
+.top {
+	display: none;
+}
+body {
+	background-color: #D2392B !important;
+	color: #E5E0C3 !important;
+}
+h1 {
+	font-size: 8em !important;
+	text-align: center !important;
+	width: auto !important;
+	color: #222 !important;
+}
+p {
+	font-size: 1.5em !important;
+	text-align: center !important;
+	line-height: 1.5 !important;
+	width: auto !important;
+}
+.bottom {
+	margin: 0 !important;
+	padding: 0 !important;
+	background-color: #D2392B !important;
+}
