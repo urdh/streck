@@ -25,11 +25,11 @@
 		{% set n = user.transactions().__len__() %}
 		{% if n > 11 %}{% set n = 11 %}{% endif %}
 		{% if undone == False and n > 2 %}
-			{% set transaction = user.transactions()[-n] %}
+			{% set transaction = user.transactions()[-n+1] %}
 			<li><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }}kr)</span></li>
 		{% endif %}
 		{% if n > 1 %}
-		{% for transaction in user.transactions()[-n+1:-2] %}
+		{% for transaction in user.transactions()[-n+2:-1] %}
 			<li><time>{{ transaction['added'] }}</time> {{ (transaction['name'] or transaction['notes']) }} <span class="price">({{ transaction['price'] }}kr)</span></li>
 		{% endfor %}
 		{% endif %}
