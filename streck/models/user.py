@@ -97,7 +97,7 @@ class User(object):
 
 	@classmethod
 	def all(cls):
-		g.db.execute('select barcode from users')
+		g.db.execute('select barcode from users order by name asc')
 		return [User(r['barcode']) for r in g.db.fetchall()]
 
 	@classmethod

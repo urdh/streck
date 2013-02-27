@@ -75,7 +75,7 @@ class Product(object):
 
 	@classmethod
 	def all(cls):
-		g.db.execute('select barcode from products')
+		g.db.execute('select barcode from products order by name asc')
 		return [Product(r['barcode']) for r in g.db.fetchall()]
 
 	@classmethod
