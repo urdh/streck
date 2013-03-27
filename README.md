@@ -62,7 +62,7 @@ Pull requests are best made from separate branches (i.e. one branch per request/
 
 ## License
 
-	Copyright (c) 2012 Simon Sigurdhsson <sigurdhsson@gmail.com>
+	Copyright (c) 2012-2013 Simon Sigurdhsson <sigurdhsson@gmail.com>
 	
 	Permission to use, copy, modify, and distribute this software for any
 	purpose with or without fee is hereby granted, provided that the above
