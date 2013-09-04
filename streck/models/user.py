@@ -4,7 +4,14 @@ from flask import g
 
 class User(object):
 	def __init__(self, barcode):
+		self.reverse = false
 		self.bcode = barcode
+		if self.bcode == app.config['REMOVE_JOBBMAT_BARCODE']:
+			self.bcode = app.config['JOBBMAT_BARCODE']
+			self.reverse = true
+
+	def reverse(self):
+		return self.reverse
 	
 	def barcode(self):
 		return self.bcode

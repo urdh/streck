@@ -12,6 +12,8 @@ class Transaction(object):
 		self.product = p.id()
 		self.price = p.price() if price == None else price
 		self.special = ''
+		if u.reverse():
+			self.price = -self.price
 		if undo:
 			self.special = 'undo'
 		if paid:
