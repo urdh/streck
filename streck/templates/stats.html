@@ -19,7 +19,7 @@
 		g2 = new Dygraph(
 			document.getElementById("graph"),
 			"/stats/timeseries.csv", // path to CSV file
-			{dateWindow:[from, to]}
+			{dateWindow:[from, to], legend:'always'}
 		);
 	</script>
 {% endblock %}
