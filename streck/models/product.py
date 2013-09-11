@@ -10,6 +10,9 @@ class Product(object):
 	def barcode(self):
 		return self.bcode
 
+	def allowed_jobbmat(self):
+		return (self.category() in app.config['ALLOWED_JOBBMAT_CATEGORIES'])
+
 	def id(self):
 		if not self.exists():
 			return None

@@ -38,6 +38,10 @@ def transaction_action(user, product):
 	p = Product(product)
 	if not p.exists():
 		return redirect('/user/%s' % u.barcode())
+	if (u.barcode() == app.config['JOBBMAT_BARCODE'] or
+		u.barcode() == app.config['REMOVE_JOBBMAT_BARCODE'])
+		and not p.allowed_jobbmat():
+		return redirect('/user/%s?disabled' % u.barcode())
 	t = Transaction(u.barcode(), p.barcode(), p.price())
 	if t.perform():
 		return redirect('/user/%s?bought=%s' % (u.barcode(), p.barcode()))
