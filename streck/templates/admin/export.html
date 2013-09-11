@@ -4,21 +4,23 @@
 	{{ super() }}
 	<table>
 		<thead>
-			<th>
-				<td>Namn</td>
+			<tr>
+				<th>Namn</th>
 				{% for category in categories %}
-				<td>{{ category['name'] }}</td>
+				<th>{{ category['name'] }}</th>
 				{% endfor %}
-			</th>
+			</tr>
 		</thead>
 		<tbody>
 		{% for user in users %}
 			<tr>
 				<td>{{ user.name() }}</td>
-				{% for category in categories %}
 				{% for cat in user.debt_per_category() %}
+				{% for category in categories %}
 				{% if category['name'] == cat['name'] %}
 				<td>{{ cat['debt'] }}kr</td>
+				{% else %}
+				<td>0kr</td>
 				{% endif %}
 				{% endfor %}
 				{% endfor %}
@@ -27,7 +29,7 @@
 		</tbody>
 	</table>
 	<ul class="minimenu">
-		<li><a href="/export/empty">Töm</a></li>
+		<li><a href="/admin/export/empty">Töm</a></li>
 		<li><a href="/admin">Bakåt</a></li>
 	</ul>
 {% endblock %}

@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 from flask import g
+from streck import app
 
 class User(object):
 	def __init__(self, barcode):
-		self.reverse = false
+		self.reverse = False
 		self.bcode = barcode
 		if self.bcode == app.config['REMOVE_JOBBMAT_BARCODE']:
 			self.bcode = app.config['JOBBMAT_BARCODE']
-			self.reverse = true
+			self.reverse = True
 
 	def reverse(self):
 		return self.reverse
 	
 	def barcode(self):
+		if self.reverse:
+			return app.config['REMOVE_JOBBMAT_BARCODE']
 		return self.bcode
 
 	def id(self):
