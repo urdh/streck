@@ -1,0 +1,33 @@
+{% extends "admin/layout.html" %}
+{% block title %}Exportera streckskulder{% endblock %}
+{% block body %}
+	{{ super() }}
+	<table>
+		<thead>
+			<th>
+				<td>Namn</td>
+				{% for category in categories %}
+				<td>{{ category['name'] }}</td>
+				{% endfor %}
+			</th>
+		</thead>
+		<tbody>
+		{% for user in users %}
+			<tr>
+				<td>{{ user.name() }}</td>
+				{% for category in categories %}
+				{% for cat in user.debt_per_category() %}
+				{% if category['name'] == cat['name'] %}
+				<td>{{ cat['debt'] }}kr</td>
+				{% endif %}
+				{% endfor %}
+				{% endfor %}
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	<ul class="minimenu">
+		<li><a href="/export/empty">Töm</a></li>
+		<li><a href="/admin">Bakåt</a></li>
+	</ul>
+{% endblock %}
