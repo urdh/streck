@@ -2,6 +2,7 @@
 from streck import app
 from flask import render_template
 import streck.controller.admin.user
+import streck.controller.admin.export
 import streck.controller.admin.product
 
 @app.route('/admin')
