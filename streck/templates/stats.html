@@ -22,4 +22,89 @@
 			{dateWindow:[from, to], legend:'always'}
 		);
 	</script>
+	<h2>Topplistor</h2>
+	<!-- topplista användare just nu -->
+	<table>
+		<caption>Topp 3 användare just nu</caption>
+		<thead>
+			<tr>
+				<th>Produkt</th>
+				<!--th>Antal</th-->
+				<th>Belopp</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for user in stats.toplist_user_now() %}
+			<tr>
+				<td>{{ user.name() }}</td>
+				<!--td>{{ user['count'] }}</td-->
+				<td>{{ user.debt() }}kr</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	<!-- topplista användare all time -->
+	<table>
+		<caption>Topp 3 användare totalt</caption>
+		<thead>
+			<tr>
+				<th>Produkt</th>
+				<!--th>Antal</th-->
+				<th>Belopp</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for user in stats.toplist_user_alltime() %}
+			<tr>
+				<td>{{ user['name'] }}</td>
+				<!--td>{{ user['count'] }}</td-->
+				<td>{{ user['total'] }}kr</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	{% for cat in categories %}
+		<!-- topplista produkter -->
+		<table>
+			<caption>Topp 3 produkter ({{ cat['name'] }})</caption>
+			<thead>
+				<tr>
+					<th>Produkt</th>
+					<th>Antal</th>
+					<!--th>Belopp</th-->
+				</tr>
+			</thead>
+			<tbody>
+			{% for product in stats.toplist_product(cat['id']) %}
+				<tr>
+					<td>{{ product['name'] }}</td>
+					<td>{{ product['count'] }}</td>
+					<!--td>{{ product['total'] }}kr</td-->
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	{% endfor %}
+	{% for cat in categories %}
+		<!-- topplista användare per kategori -->
+		<table>
+			<caption>Topp 3 användare (totalt {{ cat['name'] }})</caption>
+			<thead>
+				<tr>
+					<th>Produkt</th>
+					<!--th>Antal</th-->
+					<th>Belopp</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for user in stats.toplist_user(cat['id']) %}
+				<tr>
+					<td>{{ user['name'] }}</td>
+					<!--td>{{ user['count'] }}</td-->
+					<td>{{ user['total'] }}kr</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	{% endfor %}
 {% endblock %}

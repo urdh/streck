@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from streck import app
 from streck.models.stats import *
+from streck.models.product import *
 from flask import render_template, Response, stream_with_context
 
 @app.route('/stats')
 def stats():
-	return render_template('stats.html', stats=Stats)
+	return render_template('stats.html', stats=Stats, categories=Product.categories())
 
 @app.route('/stats/timeseries.csv')
 def csvseries():

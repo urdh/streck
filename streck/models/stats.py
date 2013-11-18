@@ -36,3 +36,24 @@ class Stats(object):
 		r = g.db.fetchone()
 		return r['total']
 
+	@classmethod
+	def toplist_product(cls, category):
+		g.db.execute('select p.name as name, count(t.price) as count, sum(t.price) as total from transactions as t left join categories as c, products as p on p.category = c.id and p.id = t.product where c.id = ? group by p.id order by count desc limit 3', [category])
+		return [r for r in g.db.fetchall()]
+
+	@classmethod
+	def toplist_user(cls, category):
+		g.db.execute('select u.name as name, count(t.price) as count, sum(t.price) as total from transactions as t left join categories as c, products as p, users as u on p.category = c.id and p.id = t.product and u.id = t.user where c.id = ? group by u.id order by total desc limit 3', [category])
+		return [r for r in g.db.fetchall()]
+
+	@classmethod
+	def toplist_user_alltime(cls):
+		g.db.execute('select u.name as name, count(t.price) as count, sum(t.price) as total from transactions as t left join categories as c, products as p, users as u on p.category = c.id and p.id = t.product and u.id = t.user group by u.id order by total desc limit 3')
+		return [r for r in g.db.fetchall()]
+
+	@classmethod
+	def toplist_user_now(cls):
+		users = User.all()
+		users = [user for user in users if user.barcode() != app.config['JOBBMAT_BARCODE']]
+		users.sort(key=lambda u: u.debt(), reverse=True)
+		return users[0:3]
