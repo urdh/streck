@@ -26,7 +26,6 @@ class Stats(object):
 
 	@classmethod
 	def timeseries(cls):
-#		g.db.execute('select sum(t.price) as total, date(t.added) as day from transactions as t where t.price > 0 group by day order by day;')
   		g.db.execute('select sum(t.price) as total, c.name as category, date(t.added) as day from transactions as t left join categories as c, products as p on p.category = c.id and t.product = p.id left join users as u on u.id = t.user where t.price > 0 and u.barcode != ? group by c.id, day order by day;', [app.config['JOBBMAT_BARCODE']])
 		return [(r['day'], r['category'], r['total']) for r in g.db.fetchall()]
 
