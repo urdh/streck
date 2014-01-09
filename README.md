@@ -62,12 +62,12 @@ Pull requests are best made from separate branches (i.e. one branch per request/
 
 ## License
 
-	Copyright (c) 2012-2013 Simon Sigurdhsson <sigurdhsson@gmail.com>
-	
+	Copyright (c) 2012-2015 Simon Sigurdhsson <sigurdhsson@gmail.com>
+
 	Permission to use, copy, modify, and distribute this software for any
 	purpose with or without fee is hereby granted, provided that the above
 	copyright notice and this permission notice appear in all copies.
-	
+
 	THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 	WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 	MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
