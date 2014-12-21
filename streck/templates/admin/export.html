@@ -15,14 +15,14 @@
 		{% for user in users %}
 			<tr>
 				<td>{{ user.name() }}</td>
-				{% for cat in user.debt_per_category() %}
 				{% for category in categories %}
+				<td>
+				{% for cat in user.debt_per_category() %}
 				{% if category['name'] == cat['name'] %}
-				<td>{{ cat['debt'] }}kr</td>
-				{% else %}
-				<td>0kr</td>
+				{{ cat['debt'] }}kr
 				{% endif %}
 				{% endfor %}
+				</td>
 				{% endfor %}
 			</tr>
 		{% endfor %}
