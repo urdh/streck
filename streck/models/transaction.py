@@ -22,7 +22,7 @@ class Transaction(object):
 
 	def perform(self):
 		if self.special == 'undo':
-			g.db.execute('delete from transactions where id = (select id from transactions order by id desc limit 1)')
+			g.db.execute('delete from transactions where id = (select id from transactions where user = ? order by id desc limit 1)', [self.user])
 		else:
 			g.db.execute('insert into transactions values (null, datetime("now"), ?, ?, ?, ?)', [self.user, self.product, self.price, self.special])
 		# we should check query success here
