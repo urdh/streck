@@ -36,4 +36,4 @@ create table transactions (
 );
 insert into categories values (null, "Öl");
 insert into categories values (null, "Ickeöl");
-insert into users values (null, "Jobbmat", true, "Jobbmat", null, "Jobbmatskonto");
+insert into users values (null, "Jobbmat", 1, "Jobbmat", null, "Jobbmatskonto");
