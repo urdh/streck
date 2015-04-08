@@ -1,5 +1,11 @@
 # streck
 
+[![Travis CI](https://img.shields.io/travis/urdh/streck.svg)](https://travis-ci.org/urdh/streck)
+[![Coveralls](https://img.shields.io/coveralls/urdh/streck.svg)](https://coveralls.io/r/urdh/streck)
+[![Requires](https://img.shields.io/requires/github/urdh/streck.svg)](https://requires.io/github/urdh/streck/requirements)
+[![Github release](https://img.shields.io/github/release/urdh/streck.svg)](https://github.com/urdh/streck/releases)
+[![License](https://img.shields.io/badge/license-ISC-blue.svg)](https://github.com/urdh/streck/blob/master/LICENSE)
+
 Streck is a system implementing a basic credit-based sales terminal. It is written in Python using the [Flask][flask] framework, but is not intended to be served publically. Instead, it is supposed to run locally and served to a local browser only.
 
 There is no focus on security (the administration interface is not password protected, and no measures to stop XSS issues and similar are taken) since the intended environment shouldn't require this.
@@ -59,19 +65,3 @@ Pull requests are best made from separate branches (i.e. one branch per request/
 ## Planned improvements
 
 * Internationalization/translation support. This is on hold, see the `babel` branch.
-
-## License
-
-	Copyright (c) 2012-2015 Simon Sigurdhsson <sigurdhsson@gmail.com>
-
-	Permission to use, copy, modify, and distribute this software for any
-	purpose with or without fee is hereby granted, provided that the above
-	copyright notice and this permission notice appear in all copies.
-
-	THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-	WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-	MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-	ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-	WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-	ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-	OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

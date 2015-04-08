@@ -1,0 +1,21 @@
+language: python
+python:
+  - '2.7'
+sudo: false
+
+install:
+  - 'pip install -r requirements.txt'
+  - 'pip install coverage coveralls'
+
+script:
+  - 'coverage run --source=streck ./streck_tests.py'
+
+after_success:
+  - coveralls
+
+deploy:
+  provider: releases
+  api_key:
+    secure: YcGizaHq9aMGVCHHvp21PtC8Cf7UoEhMpgUa0a94oRfNqHECCVBs6Ph8O3IXsTMFt+PML1lHcq952Klb3u9oUPDKNyl18AzfwIbDiZViiGYFyeAe/1P0Ba0KKSsZrto1XsKtdlIDZuregk2arR92GQ3c9pHCB/j3E2qvOSCk1vg=
+  on:
+    tags: true
