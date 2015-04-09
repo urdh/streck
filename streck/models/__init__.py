@@ -18,3 +18,12 @@ def close_db(e):
 	g.db.close()
 	g._db.commit()
 	g._db.close()
+
+# create the database (only used by tests so far)
+def init_db():
+	with app.app_context():
+		setup_db()
+		with app.open_resource('schema.sql', mode='r') as f:
+			g.db.executescript(f.read())
+		g._db.commit()
+		close_db(None)

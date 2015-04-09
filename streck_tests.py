@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 import os
 import unittest
+import tempfile
 from streck import app
+import streck.models
 
 class StreckTestCase(unittest.TestCase):
     def setUp(self):
@@ -10,10 +12,7 @@ class StreckTestCase(unittest.TestCase):
         app.config['TESTING'] = True
         self.app = streck.app.test_client()
         # Fill database
-        self.db = sqlite3.connect(app.config['DATABASE'])
-        with self.app.open_resource('schema.sql', mode='r') as f:
-            self.db.cursor().executescript(f.read())
-        self.db.commit()
+        streck.models.init_db()
 
     def tearDown(self):
         pass
