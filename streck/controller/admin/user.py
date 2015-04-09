@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-from os import path
+from os import path, mkdir
 from streck import app
 from streck.models.user import *
 from flask import render_template, request, flash, redirect
+from werkzeug.utils import secure_filename
 
 def upload_user_picture(file):
 	if not file:
 		return None
+	if not path.exists(path.join(app.config['UPLOAD_FOLDER'], 'users')):
+		mkdir(path.join(app.config['UPLOAD_FOLDER'], 'users'))
 	fname = path.join('users/', secure_filename(file.filename))
 	file.save(path.join(app.config['UPLOAD_FOLDER'], fname))
 	return fname
@@ -43,15 +46,14 @@ def admin_show_user(barcode):
 
 @app.route('/admin/user/<barcode>/update',methods=['POST'])
 def admin_edit_user(barcode):
-	if request.method == 'POST':
-		u = User(barcode)
-		if not u.exists():
-			flash(u'Användaren existerar inte!')
-			return redirect('/admin/user')
-		fname = upload_user_picture(request.files.get('picture', None))
-		u.update(request.form['name'], fname)
-		return redirect('/admin/user/%s' % barcode)
-	return redirect('/admin/user')
+	u = User(barcode)
+	if not u.exists():
+		flash(u'Användaren existerar inte!')
+		return redirect('/admin/user')
+	name = request.form.get('name', u.name())
+	fname = upload_user_picture(request.files.get('picture', None))
+	u.update(name, fname)
+	return redirect('/admin/user/%s' % barcode)
 
 @app.route('/admin/user/<barcode>/enable')
 def admin_enable_user(barcode):
@@ -78,4 +80,3 @@ def admin_disable_user(barcode):
 	else:
 		flash(u'Användaren är nu avstängd!')
 	return redirect('/admin/user/%s' % barcode)
-
