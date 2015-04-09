@@ -32,6 +32,35 @@ class GenericStreckTestCase(unittest.TestCase):
         shutil.rmtree(streck.app.config['UPLOAD_FOLDER'])
 
 
+class StaticPageTests(GenericStreckTestCase):
+    """ Test all the pretty static pages.
+
+    This is mostly for coverage, but we do look at the status code.
+
+    TODO: test for some vital content on these pages?
+    """
+
+    def test_admin_index(self):
+        """ The admin landing page. """
+        rv = self.app.get('/admin')
+        assert rv.status_code == 200
+
+    def test_landing(self):
+        """ The main page. """
+        rv = self.app.get('/')
+        assert rv.status_code == 200
+
+    def test_error(self):
+        """ The error page.
+
+        Note: this is not the 404/error code handler!
+
+        TODO: consider expecting an error code here instead
+        """
+        rv = self.app.get('/error')
+        assert rv.status_code == 200
+
+
 class UserModelTests(GenericStreckTestCase):
     """ Test the :class:User model and controller. """
     IMAGE=b''.join([
@@ -143,6 +172,13 @@ class UserModelTests(GenericStreckTestCase):
         rv = self.app.get('/images/%s' % new_picture)
         assert rv.status_code == 200
 
+    # TODO: /user/<barcode>, /admin/user, /admin/user/<barcode>, more?
+
+
+# TODO: TransactionModelTests
+# TODO: ProductModelTests
+# TODO: StatsModelTests
+# TODO: AdminExportModelTests
 
 # Run tests
 if __name__ == '__main__':

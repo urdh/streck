@@ -14,3 +14,5 @@ def index():
 @app.route('/error')
 def error():
 	return render_template('error.html')
+
+# TODO: a real error handler using @app.errorhandler(404)
