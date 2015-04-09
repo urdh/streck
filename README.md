@@ -52,10 +52,6 @@ Streck is fairly simple to use, basically only requiring a cheap computer and a 
 
 To buy things, a user first scans the barcode that identifies him and logs him in. Then, the user scans the barcode of whatever he wants to buy. It's as simple as that. Products may also be scanned without being logged in, displaying their price.
 
-### The conversion tool
-
-The conversion tool included in the repository, `./convert.py`, converts data from an earlier, Java-based software solving a similar problem. That software is not publically available, and thus the conversion tool will probably not be very useful to you. Just ignore it.
-
 ## Contributing
 
 All development of Streck is done on Github. If you'd like to contribute, please raise issues and submit pull requests using the Github interface.
