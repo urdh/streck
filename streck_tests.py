@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import shutil
 import unittest
 import tempfile
+from StringIO import StringIO
+from binascii import unhexlify
 from streck import app
 import streck.models
 
@@ -19,15 +22,23 @@ class GenericStreckTestCase(unittest.TestCase):
         self.app = streck.app.test_client()
         # Fill database
         streck.models.init_db()
+        # Get a temporary directory for uploads
+        streck.app.config['UPLOAD_FOLDER'] = tempfile.mkdtemp()
 
     def tearDown(self):
         """ Tear down test case. """
         os.close(self.db_fd)
         os.unlink(streck.app.config['DATABASE'])
+        shutil.rmtree(streck.app.config['UPLOAD_FOLDER'])
 
 
 class UserModelTests(GenericStreckTestCase):
     """ Test the :class:User model and controller. """
+    IMAGE=b''.join([
+            b'89504e470d0a1a0a0000000d4948445200000001000000010100000000376ef9',
+            b'240000001049444154789c626001000000ffff03000006000557bfabd4000000',
+            b'0049454e44ae426082'
+          ])
     TESTUSER = dict(barcode='jdoe', name='John Doe')
 
     def add_user(self, barcode, name):
@@ -99,13 +110,38 @@ class UserModelTests(GenericStreckTestCase):
         assert b'Användaren är inte längre avstängd!' in rv.data
         with app.test_request_context():
             app.preprocess_request()
-            assert (not streck.models.user.User(self.TESTUSER['barcode']).disabled())
+            assert streck.models.user.User(self.TESTUSER['barcode']).enabled()
 
         # Enable a user again
         rv = self.app.get('/admin/user/%s/enable' % self.TESTUSER['barcode'], follow_redirects=True)
         with app.test_request_context():
             app.preprocess_request()
-            assert (not streck.models.user.User(self.TESTUSER['barcode']).disabled())
+            assert streck.models.user.User(self.TESTUSER['barcode']).enabled()
+
+        # Disable a nonexistent user
+        rv = self.app.get('/admin/user/nobody/disable', follow_redirects=True)
+        assert b'Användaren existerar inte!' in rv.data
+
+        # Enable a nonexistent user
+        rv = self.app.get('/admin/user/nobody/enable', follow_redirects=True)
+        assert b'Användaren existerar inte!' in rv.data
+
+    def test_upload_picture(self):
+        """ Test uploading a user picture through the admin interface. """
+        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+
+        # Update a user
+        rv = self.app.post('/admin/user/%s/update' % self.TESTUSER['barcode'], data=dict(
+            picture=(StringIO(unhexlify(self.IMAGE)), 'picture.png')
+        ), buffered=True, follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            new_picture = streck.models.user.User(self.TESTUSER['barcode']).picture()
+        assert new_picture != '../img/NoneUser.png'
+
+        # Compare the resulting picture
+        rv = self.app.get('/images/%s' % new_picture)
+        assert rv.status_code == 200
 
 
 # Run tests
