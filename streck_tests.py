@@ -70,16 +70,16 @@ class UserModelTests(GenericStreckTestCase):
           ])
     TESTUSER = dict(barcode='jdoe', name='John Doe')
 
-    def add_user(self, barcode, name):
+    def add_user(self, user_dict):
         """ Helper function for adding a user to the database. """
         return self.app.post('/admin/user/add', data=dict(
-            barcode=barcode,
-            name=name
+            barcode=user_dict['barcode'],
+            name=user_dict['name']
         ), follow_redirects=True)
 
     def test_user_info(self):
         """ Test accessing users. """
-        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        self.add_user(self.TESTUSER)
 
         # Access a normal user
         rv = self.app.get('/user/%s' % self.TESTUSER['barcode'], follow_redirects=True)
@@ -97,21 +97,21 @@ class UserModelTests(GenericStreckTestCase):
     def test_create_user(self):
         """ Test creating users through the admin interface. """
         # Create user
-        rv = self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        rv = self.add_user(self.TESTUSER)
         assert b'Användaren &#34;%s&#34; tillagd.' % self.TESTUSER['name']
         with app.test_request_context():
             app.preprocess_request()
             assert streck.models.user.User(self.TESTUSER['barcode']).exists()
 
         # Create already existing user
-        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
-        rv = self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        self.add_user(self.TESTUSER)
+        rv = self.add_user(self.TESTUSER)
         assert b'Användarens ID är ej unikt!' in rv.data
 
     def test_update_user(self):
         """ Test updating users through the admin interface. """
         new_user_name = 'Joe'
-        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        self.add_user(self.TESTUSER)
 
         # Update a user
         rv = self.app.post('/admin/user/%s/update' % self.TESTUSER['barcode'], data=dict(
@@ -130,7 +130,7 @@ class UserModelTests(GenericStreckTestCase):
 
     def test_user_disabling(self):
         """ Test disabling and enabling users through the admin interface. """
-        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        self.add_user(self.TESTUSER)
 
         # Disable a user
         rv = self.app.get('/admin/user/%s/disable' % self.TESTUSER['barcode'], follow_redirects=True)
@@ -168,7 +168,7 @@ class UserModelTests(GenericStreckTestCase):
 
     def test_picture(self):
         """ Test uploading a user picture through the admin interface. """
-        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        self.add_user(self.TESTUSER)
 
         # Test the default picture
         with app.test_request_context():
@@ -196,13 +196,13 @@ class UserModelTests(GenericStreckTestCase):
         assert rv.status_code == 200
 
         # More than 0 users
-        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        self.add_user(self.TESTUSER)
         rv = self.app.get('/admin/user', follow_redirects=True)
         assert self.TESTUSER['name'] in rv.data
 
     def test_admin_user_info(self):
         """ Test loading a single user in the administration interface. """
-        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        self.add_user(self.TESTUSER)
 
         # Missing user
         rv = self.app.get('/admin/user/nobody', follow_redirects=True)
