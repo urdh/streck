@@ -395,6 +395,22 @@ class TransactionModelTests(GenericStreckTestCase):
             streck.models.user.User.add('john', 'User 1', '../img/NoneUser.png')
             streck.models.user.User.add('jane', 'User 2', '../img/NoneUser.png').disable()
 
+    def test_buy_missing_user(self):
+        """ Test buying something for a missing user. """
+        rv = self.app.post('/user/nobody/buy', data=dict(barcode='0012345678905'), follow_redirects=True)
+        assert b'Användaren existerar inte!' in rv.data
+
+    def test_buy_product_is_user(self):
+        """ Test buying something that is a user. """
+        rv = self.app.post('/user/john/buy', data=dict(barcode='jane'))
+        assert rv.status_code == 302
+        assert '/user/jane' in rv.headers.get('Location', '')
+
+    def test_user_logout(self):
+        """ Test logging a user out. """
+        rv = self.app.post('/user/john/buy', data=dict(barcode=app.config['LOGOUT_BARCODE']), follow_redirects=True)
+        assert b'Du har loggats ut!' in rv.data
+
     def test_buy(self):
         """ Test buying something. """
         # Make sure we can buy the product
