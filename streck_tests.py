@@ -214,7 +214,7 @@ class UserModelTests(GenericStreckTestCase):
 
 
 class ProductModelTests(GenericStreckTestCase):
-    """ Test the :class:User model and controller. """
+    """ Test the :class:Product model and controller. """
     IMAGE=b''.join([
             b'89504e470d0a1a0a0000000d4948445200000001000000010100000000376ef9',
             b'240000001049444154789c626001000000ffff03000006000557bfabd4000000',
@@ -379,7 +379,134 @@ class ProductModelTests(GenericStreckTestCase):
         rv = self.app.get('/admin/product/%s' % self.TESTPRODUCT1['barcode'], follow_redirects=True)
         assert self.TESTPRODUCT1['name'] in rv.data
 
-# TODO: TransactionModelTests
+
+class TransactionModelTests(GenericStreckTestCase):
+    """ Test the :class:Transaction model and controller. """
+
+    def setUp(self):
+        """ Set up test case.
+
+        Inserts a product and a user into the database
+        """
+        GenericStreckTestCase.setUp(self)
+    	with app.test_request_context():
+            app.preprocess_request()
+            streck.models.product.Product.add('0012345678905', 'The Product', 5.0, 1, '../img/NoneProduct.png')
+            streck.models.user.User.add('john', 'User 1', '../img/NoneUser.png')
+            streck.models.user.User.add('jane', 'User 2', '../img/NoneUser.png').disable()
+
+    def test_buy(self):
+        """ Test buying something. """
+        # Make sure we can buy the product
+        self.app.post('/user/john/buy', data=dict(barcode='0012345678905'), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('john').debt() == 5.0
+
+        # Make sure it appears on the user page
+        rv = self.app.get('/user/john', follow_redirects=True)
+        assert b'The Product' in rv.data
+
+    def test_undo(self):
+        """ Test undoing something. """
+        # Hack a product into the database so we have something to undo
+        with app.test_request_context():
+            app.preprocess_request()
+            streck.models.transaction.Transaction('john', '0012345678905', 5.0).perform()
+            assert streck.models.user.User('john').debt() == 5.0
+
+        # Make sure we can undo the transaction
+        self.app.post('/user/john/buy', data=dict(barcode=app.config['UNDO_BARCODE']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('john').debt() == 0.0
+
+        # Make sure it appears on the user page
+        rv = self.app.get('/user/john', follow_redirects=True)
+        assert b'The Product' not in rv.data
+
+    def test_paid(self):
+        """ Test resetting a user debt. """
+        # Make sure we have a debt
+        with app.test_request_context():
+            app.preprocess_request()
+            streck.models.transaction.Transaction('john', '0012345678905', 5.0).perform()
+            streck.models.transaction.Transaction('john', '0012345678905', 5.0).perform()
+            assert streck.models.user.User('john').debt() == 10.0
+
+        # Test paying off the debt
+        self.app.post('/user/john/buy', data=dict(barcode=app.config['PAID_BARCODE']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('john').debt() == 0.0
+
+    def test_buy_disabled(self):
+        """ Test buying something using a disabled user. """
+        # Make sure we can't buy the product
+        self.app.post('/user/jane/buy', data=dict(barcode='0012345678905'), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('jane').debt() == 0.0
+
+        # Make sure it appears on the user page
+        rv = self.app.get('/user/jane', follow_redirects=True)
+        assert b'The Product' not in rv.data
+
+    def test_undo_disabled(self):
+        """ Test undoing a transaction using a disabled user. """
+        # Hack a product into the database so we have something to undo
+        with app.test_request_context():
+            app.preprocess_request()
+            streck.models.transaction.Transaction('jane', '0012345678905', 5.0).perform()
+            assert streck.models.user.User('jane').debt() == 5.0
+
+        # Try to undo it
+        self.app.post('/user/jane/buy', data=dict(barcode=app.config['UNDO_BARCODE']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('jane').debt() == 5.0
+
+    def test_paid_disabled(self):
+        """ Test resetting the debt of a disabled user. """
+        # Make sure we have a debt
+        with app.test_request_context():
+            app.preprocess_request()
+            streck.models.transaction.Transaction('jane', '0012345678905', 5.0).perform()
+            streck.models.transaction.Transaction('jane', '0012345678905', 5.0).perform()
+            assert streck.models.user.User('jane').debt() == 10.0
+
+        # Test paying off the debt
+        self.app.post('/user/jane/buy', data=dict(barcode=app.config['PAID_BARCODE']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('jane').debt() == 0.0
+
+    def test_undo_empty(self):
+        """ Test undoing the last transaction when there isn't one. """
+        # Try to undo it
+        self.app.post('/user/john/buy', data=dict(barcode=app.config['UNDO_BARCODE']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('john').debt() == 0.0
+
+    def test_undo_after_paid(self):
+        """ Test undoing a transaction when the last one was a debt reset. """
+        # Make sure we have a debt, and that it's paid
+        with app.test_request_context():
+            app.preprocess_request()
+            streck.models.transaction.Transaction('john', '0012345678905', 5.0).perform()
+            streck.models.transaction.Transaction('john', '0012345678905', 5.0).perform()
+            streck.models.transaction.Transaction('john', paid=True).perform()
+            assert streck.models.user.User('john').last_paid_id() != -1
+            assert streck.models.user.User('john').debt() == 0.0
+
+        # Try to undo
+        self.app.post('/user/john/buy', data=dict(barcode=app.config['UNDO_BARCODE']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User('john').debt() == 10.0 # by design apparently?
+
+
 # TODO: StatsModelTests
 # TODO: AdminExportModelTests
 # TODO: JobbmatFeatureTests
