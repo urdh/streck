@@ -77,8 +77,19 @@ class UserModelTests(GenericStreckTestCase):
             name=name
         ), follow_redirects=True)
 
-    def test_missing_user(self):
-        """ Test accessing nonexistent users. """
+    def test_user_info(self):
+        """ Test accessing users. """
+        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+
+        # Access a normal user
+        rv = self.app.get('/user/%s' % self.TESTUSER['barcode'], follow_redirects=True)
+        assert self.TESTUSER['name'] in rv.data
+
+        # Access a disabled user
+        self.app.get('/admin/user/%s/disable' % self.TESTUSER['barcode'], follow_redirects=True)
+        rv = self.app.get('/user/%s' % self.TESTUSER['barcode'], follow_redirects=True)
+        assert b'<h1>Nej!</h1>' in rv.data
+
         # Access a nonexistent user
         rv = self.app.get('/user/nobody', follow_redirects=True)
         assert b'Användaren existerar inte!' in rv.data
@@ -155,9 +166,15 @@ class UserModelTests(GenericStreckTestCase):
         rv = self.app.get('/admin/user/nobody/enable', follow_redirects=True)
         assert b'Användaren existerar inte!' in rv.data
 
-    def test_upload_picture(self):
+    def test_picture(self):
         """ Test uploading a user picture through the admin interface. """
         self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+
+        # Test the default picture
+        with app.test_request_context():
+            app.preprocess_request()
+            new_picture = streck.models.user.User(self.TESTUSER['barcode']).picture()
+        assert new_picture == '../img/NoneUser.png'
 
         # Update a user
         rv = self.app.post('/admin/user/%s/update' % self.TESTUSER['barcode'], data=dict(
@@ -172,7 +189,28 @@ class UserModelTests(GenericStreckTestCase):
         rv = self.app.get('/images/%s' % new_picture)
         assert rv.status_code == 200
 
-    # TODO: /user/<barcode>, /admin/user, /admin/user/<barcode>, more?
+    def test_admin_user_list(self):
+        """ Test loading the administration interface user list. """
+        # No users
+        rv = self.app.get('/admin/user')
+        assert rv.status_code == 200
+
+        # More than 0 users
+        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+        rv = self.app.get('/admin/user', follow_redirects=True)
+        assert self.TESTUSER['name'] in rv.data
+
+    def test_admin_user_info(self):
+        """ Test loading a single user in the administration interface. """
+        self.add_user(self.TESTUSER['barcode'], self.TESTUSER['name'])
+
+        # Missing user
+        rv = self.app.get('/admin/user/nobody', follow_redirects=True)
+        assert b'Användaren existerar inte!' in rv.data
+
+        # Existing user
+        rv = self.app.get('/admin/user/%s' % self.TESTUSER['barcode'], follow_redirects=True)
+        assert self.TESTUSER['name'] in rv.data
 
 
 # TODO: TransactionModelTests
