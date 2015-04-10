@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-from os import path
+from os import path, mkdir
 from streck import app
 from streck.models.product import *
 from flask import render_template, request, flash, redirect
+from werkzeug.utils import secure_filename
 
 def upload_product_picture(file):
 	if not file:
 		return None
+	if not path.exists(path.join(app.config['UPLOAD_FOLDER'], 'products')):
+		mkdir(path.join(app.config['UPLOAD_FOLDER'], 'products'))
 	fname = path.join('products/', secure_filename(file.filename))
 	file.save(path.join(app.config['UPLOAD_FOLDER'], fname))
 	return fname
@@ -27,7 +30,7 @@ def admin_add_product():
 		fname = upload_product_picture(request.files.get('picture', None))
 		p = Product.add(request.form['barcode'], request.form['name'], request.form['price'], request.form['category'], fname)
 		if not p.exists():
-			flash(u'Användaren kunde inte läggas till!')
+			flash(u'Produkten kunde inte läggas till!')
 			return redirect('/admin/product/add')
 		flash(u'Produkten "%s" tillagd.' % p.name())
 		return redirect('/admin/product/%s' % p.barcode())
@@ -43,12 +46,10 @@ def admin_show_product(barcode):
 
 @app.route('/admin/product/<barcode>/update',methods=['POST'])
 def admin_edit_product(barcode):
-	if request.method == 'POST':
-		p = Product(barcode)
-		if not p.exists():
-			flash(u'Produkten existerar inte!')
-			return redirect('/admin/product')
-		fname = upload_product_picture(request.files.get('picture', None))
-		p.update(request.form['name'], request.form['price'], request.form['category'], fname)
-		return redirect('/admin/product/%s' % barcode)
-	return redirect('/admin/product')
+	p = Product(barcode)
+	if not p.exists():
+		flash(u'Produkten existerar inte!')
+		return redirect('/admin/product')
+	fname = upload_product_picture(request.files.get('picture', None))
+	p.update(request.form['name'], request.form['price'], request.form['category'], fname)
+	return redirect('/admin/product/%s' % barcode)
