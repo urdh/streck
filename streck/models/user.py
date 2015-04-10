@@ -13,7 +13,7 @@ class User(object):
 
 	def reverse(self):
 		return self.reverse
-	
+
 	def barcode(self):
 		if self.reverse:
 			return app.config['REMOVE_JOBBMAT_BARCODE']
@@ -24,13 +24,13 @@ class User(object):
 			return None
 		g.db.execute('select id from users where barcode = ?', [self.bcode])
 		r = g.db.fetchone()
-		return r['id']
-	
+		return int(r['id'])
+
 	def exists(self):
 		g.db.execute('select id from users where barcode = ?', [self.bcode])
 		r = g.db.fetchone()
 		return r != None
-	
+
 	def picture(self):
 		if not self.exists():
 			return None
@@ -39,7 +39,7 @@ class User(object):
 		if r['image'] == None:
 			return '../img/NoneUser.png'
 		return r['image']
-	
+
 	def name(self):
 		if not self.exists():
 			return None
@@ -49,13 +49,13 @@ class User(object):
 
 	def last_paid_id(self):
 		if not self.exists():
-			return 0.0
+			return 0
 		g.db.execute('select t.id as id from transactions as t, users as u where u.barcode = ? and u.id = t.user and (t.notes = "paid" or t.price < 0) order by id desc limit 1', [self.bcode])
 		r = g.db.fetchone()
 		if r == None:
 			return -1
-		return r['id']
-	
+		return int(r['id'])
+
 	def debt(self):
 		if not self.exists():
 			return 0.0
@@ -63,8 +63,8 @@ class User(object):
 		r = g.db.fetchone()
 		if r['debt'] == None:
 			return 0.0
-		return r['debt']
-	
+		return float(r['debt'])
+
 	def debt_per_category(self):
 		if not self.exists():
 			return []
@@ -116,4 +116,3 @@ class User(object):
 			return None
 		g.db.execute('insert into users values (null, ?, 1, ?, ?, null)', [barcode, name, picture])
 		return User(barcode)
-

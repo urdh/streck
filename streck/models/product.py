@@ -18,7 +18,7 @@ class Product(object):
 			return None
 		g.db.execute('select id from products where barcode = ?', [self.bcode])
 		r = g.db.fetchone()
-		return r['id']
+		return int(r['id'])
 
 	def exists(self):
 		g.db.execute('select id from products where barcode = ?', [self.bcode])
@@ -46,7 +46,7 @@ class Product(object):
 			return None
 		g.db.execute('select price from products where barcode = ?', [self.bcode])
 		r = g.db.fetchone()
-		return r['price']
+		return float(r['price'])
 
 	def category(self):
 		if not self.exists():
@@ -93,4 +93,3 @@ class Product(object):
 	def categories(cls):
 		g.db.execute('select id, name from categories')
 		return g.db.fetchall()
-		

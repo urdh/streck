@@ -9,7 +9,7 @@ class Stats(object):
 	def top_product(cls):
 		g.db.execute('select p.id, p.name, t.product, count(t.product) as c from products as p, transactions as t left join users as u on u.id = t.user where p.id = t.product and u.barcode != ? group by t.product order by c desc limit 1', [app.config['JOBBMAT_BARCODE']])
 		r = g.db.fetchone()
-		return (r['name'], r['c'])
+		return (r['name'], int(r['c']))
 
 	@classmethod
 	def top_user_debt(cls):
@@ -22,18 +22,18 @@ class Stats(object):
 	def top_user_total(cls):
 		g.db.execute('select sum(t.price) as s, u.* from transactions as t left join users as u on u.id = t.user where t.price > 0 and u.barcode != ? group by t.user order by s desc limit 1', [app.config['JOBBMAT_BARCODE']])
 		r = g.db.fetchone()
-		return (r['name'], r['s'])
+		return (r['name'], float(r['s']))
 
 	@classmethod
 	def timeseries(cls):
   		g.db.execute('select sum(t.price) as total, c.name as category, date(t.added) as day from transactions as t left join categories as c, products as p on p.category = c.id and t.product = p.id left join users as u on u.id = t.user where t.price > 0 and u.barcode != ? group by c.id, day order by day;', [app.config['JOBBMAT_BARCODE']])
-		return [(r['day'], r['category'], r['total']) for r in g.db.fetchall()]
+		return [(r['day'], r['category'], float(r['total'])) for r in g.db.fetchall()]
 
 	@classmethod
 	def total_four_weeks(cls):
 		g.db.execute('select sum(t.price) as total from transactions as t left join users as u on u.id = t.user where t.price > 0 and date(t.added) > date("now","-28 days") and u.barcode != ?;', [app.config['JOBBMAT_BARCODE']])
 		r = g.db.fetchone()
-		return r['total']
+		return float(r['total'])
 
 	@classmethod
 	def toplist_product(cls, category):
