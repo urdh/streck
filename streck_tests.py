@@ -98,13 +98,12 @@ class UserModelTests(GenericStreckTestCase):
         """ Test creating users through the admin interface. """
         # Create user
         rv = self.add_user(self.TESTUSER)
-        assert b'Användaren &#34;%s&#34; tillagd.' % self.TESTUSER['name']
+        assert b'Användaren &#34;%s&#34; tillagd.' % self.TESTUSER['name'] in rv.data
         with app.test_request_context():
             app.preprocess_request()
             assert streck.models.user.User(self.TESTUSER['barcode']).exists()
 
         # Create already existing user
-        self.add_user(self.TESTUSER)
         rv = self.add_user(self.TESTUSER)
         assert b'Användarens ID är ej unikt!' in rv.data
 
