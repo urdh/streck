@@ -6,6 +6,7 @@ import unittest
 import tempfile
 from StringIO import StringIO
 from binascii import unhexlify
+from flask import g
 from streck import app
 import streck.models
 
@@ -212,10 +213,164 @@ class UserModelTests(GenericStreckTestCase):
         assert self.TESTUSER['name'] in rv.data
 
 
+class ProductModelTests(GenericStreckTestCase):
+    """ Test the :class:User model and controller. """
+    IMAGE=b''.join([
+            b'89504e470d0a1a0a0000000d4948445200000001000000010100000000376ef9',
+            b'240000001049444154789c626001000000ffff03000006000557bfabd4000000',
+            b'0049454e44ae426082'
+          ])
+    TESTPRODUCT1 = dict(barcode='0012345678905', name='Product 1', price=10.0)
+    TESTPRODUCT2 = dict(barcode='4011200296903', name='Product 2', price=7.5)
+    CATEGORIES = {1: b'Öl', 2: b'Ickeöl'} # These are hardcoded :(
+
+    def add_product(self, product_dict, category):
+        """ Helper function for adding a user to the database. """
+        return self.app.post('/admin/product/add', data=dict(
+            barcode=product_dict['barcode'],
+            name=product_dict['name'],
+            price=product_dict['price'],
+            category=category
+        ), follow_redirects=True)
+
+    def test_product_info(self):
+        """ Test accessing users. """
+        self.add_product(self.TESTPRODUCT1, 1)
+        self.add_product(self.TESTPRODUCT2, 2)
+
+        # Access products
+        rv = self.app.get('/product/%s' % self.TESTPRODUCT1['barcode'], follow_redirects=True)
+        assert self.TESTPRODUCT1['name'] in rv.data
+        assert self.CATEGORIES[1] in rv.data
+        rv = self.app.get('/product/%s' % self.TESTPRODUCT2['barcode'], follow_redirects=True)
+        assert self.TESTPRODUCT2['name'] in rv.data
+        assert self.CATEGORIES[2] in rv.data
+
+        # Access a nonexistent product
+        rv = self.app.get('/product/nothing', follow_redirects=True)
+        assert b'Produkten existerar inte!' in rv.data
+
+    def test_create_product(self):
+        """ Test creating products through the admin interface. """
+        # Create product
+        rv = self.add_product(self.TESTPRODUCT1, 1)
+        assert b'Produkten &#34;%s&#34; tillagd.' % self.TESTPRODUCT1['name'] in rv.data
+        with app.test_request_context():
+            app.preprocess_request()
+            product = streck.models.product.Product(self.TESTPRODUCT1['barcode'])
+            assert product.exists()
+            assert product.price() == self.TESTPRODUCT1['price']
+            assert product.category() == (self.CATEGORIES[1]).decode('utf-8')
+
+        # Create another product
+        rv = self.add_product(self.TESTPRODUCT2, 2)
+        assert b'Produkten &#34;%s&#34; tillagd.' % self.TESTPRODUCT2['name'] in rv.data
+        with app.test_request_context():
+            app.preprocess_request()
+            product = streck.models.product.Product(self.TESTPRODUCT2['barcode'])
+            assert product.exists()
+            assert product.price() == self.TESTPRODUCT2['price']
+            assert product.category() == (self.CATEGORIES[2]).decode('utf-8')
+
+        # Create already existing product
+        rv = self.add_product(self.TESTPRODUCT1, 1)
+        assert b'Produktens ID är ej unikt!' in rv.data
+
+        # Create already existing product with different category
+        rv = self.add_product(self.TESTPRODUCT1, 2)
+        assert b'Produktens ID är ej unikt!' in rv.data
+
+    def test_update_product(self):
+        """ Test updating products through the admin interface. """
+        new_name = 'Cheaper Product'
+        new_price = 0.5
+        self.add_product(self.TESTPRODUCT1, 1)
+
+        # Update product name
+        rv = self.app.post('/admin/product/%s/update' % self.TESTPRODUCT1['barcode'], data=dict(
+            name=new_name
+        ), follow_redirects=True)
+        assert new_name in rv.data
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.product.Product(self.TESTPRODUCT1['barcode']).name() == new_name
+
+        # Update product price
+        rv = self.app.post('/admin/product/%s/update' % self.TESTPRODUCT1['barcode'], data=dict(
+            price=new_price
+        ), follow_redirects=True)
+        assert str(new_price) in rv.data
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.product.Product(self.TESTPRODUCT1['barcode']).price() == new_price
+
+        # Update product category
+        rv = self.app.post('/admin/product/%s/update' % self.TESTPRODUCT1['barcode'], data=dict(
+            category=2
+        ), follow_redirects=True)
+        assert self.CATEGORIES[2] in rv.data
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.product.Product(self.TESTPRODUCT1['barcode']).category() == (self.CATEGORIES[2]).decode('utf-8')
+
+        # Update a nonexistent product
+        rv = self.app.post('/admin/product/nothing/update', data=dict(
+            name='Irrelevant'
+        ), follow_redirects=True)
+        assert b'Produkten existerar inte!' in rv.data
+
+    def test_picture(self):
+        """ Test uploading a product picture through the admin interface. """
+        self.add_product(self.TESTPRODUCT1, 1)
+
+        # Test the default picture
+        with app.test_request_context():
+            app.preprocess_request()
+            new_picture = streck.models.product.Product(self.TESTPRODUCT1['barcode']).picture()
+        assert new_picture == '../img/NoneProduct.png'
+
+        # Update a user
+        rv = self.app.post('/admin/product/%s/update' % self.TESTPRODUCT1['barcode'], data=dict(
+            picture=(StringIO(unhexlify(self.IMAGE)), 'picture.png')
+        ), buffered=True, follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            new_picture = streck.models.product.Product(self.TESTPRODUCT1['barcode']).picture()
+        assert new_picture != '../img/NoneProduct.png'
+
+        # Compare the resulting picture
+        rv = self.app.get('/images/%s' % new_picture)
+        assert rv.status_code == 200
+
+    def test_admin_product_list(self):
+        """ Test loading the administration interface product list. """
+        # No products
+        rv = self.app.get('/admin/product')
+        assert rv.status_code == 200
+
+        # More than 0 products
+        self.add_product(self.TESTPRODUCT1, 1)
+        self.add_product(self.TESTPRODUCT2, 2)
+        rv = self.app.get('/admin/product', follow_redirects=True)
+        assert self.TESTPRODUCT1['name'] in rv.data
+        assert self.TESTPRODUCT2['name'] in rv.data
+
+    def test_admin_product_info(self):
+        """ Test loading a single product in the administration interface. """
+        self.add_product(self.TESTPRODUCT1, 1)
+
+        # Missing product
+        rv = self.app.get('/admin/product/nothing', follow_redirects=True)
+        assert b'Produkten existerar inte!' in rv.data
+
+        # Existing product
+        rv = self.app.get('/admin/product/%s' % self.TESTPRODUCT1['barcode'], follow_redirects=True)
+        assert self.TESTPRODUCT1['name'] in rv.data
+
 # TODO: TransactionModelTests
-# TODO: ProductModelTests
 # TODO: StatsModelTests
 # TODO: AdminExportModelTests
+# TODO: JobbmatFeatureTests
 
 # Run tests
 if __name__ == '__main__':
