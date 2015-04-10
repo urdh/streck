@@ -233,6 +233,18 @@ class ProductModelTests(GenericStreckTestCase):
             category=category
         ), follow_redirects=True)
 
+    def test_arrival_page(self):
+        """ Test the product/user arrival page using a product. """
+        self.add_product(self.TESTPRODUCT1, 1)
+
+        # Existing product
+        rv = self.app.post('/user', data=dict(barcode=self.TESTPRODUCT1['barcode']), follow_redirects=True)
+        assert self.TESTPRODUCT1['name'] in rv.data
+
+        # Nonexistent product (albeit for incorrect requests)
+        rv = self.app.post('/product', data=dict(barcode='nothing'), follow_redirects=True)
+        assert b'Produkten eller användaren existerar inte!' in rv.data
+
     def test_product_info(self):
         """ Test accessing users. """
         self.add_product(self.TESTPRODUCT1, 1)
@@ -371,6 +383,7 @@ class ProductModelTests(GenericStreckTestCase):
 # TODO: StatsModelTests
 # TODO: AdminExportModelTests
 # TODO: JobbmatFeatureTests
+# TODO: SpecialBarcodeTests
 
 # Run tests
 if __name__ == '__main__':
