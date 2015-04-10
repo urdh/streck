@@ -50,6 +50,9 @@ def admin_edit_product(barcode):
 	if not p.exists():
 		flash(u'Produkten existerar inte!')
 		return redirect('/admin/product')
+	name = request.form.get('name', None)
+	price = request.form.get('price', None)
+	category = request.form.get('category', None)
 	fname = upload_product_picture(request.files.get('picture', None))
-	p.update(request.form['name'], request.form['price'], request.form['category'], fname)
+	p.update(name, price, category, fname)
 	return redirect('/admin/product/%s' % barcode)

@@ -50,7 +50,7 @@ def admin_edit_user(barcode):
 	if not u.exists():
 		flash(u'Användaren existerar inte!')
 		return redirect('/admin/user')
-	name = request.form.get('name', u.name())
+	name = request.form.get('name', None)
 	fname = upload_user_picture(request.files.get('picture', None))
 	u.update(name, fname)
 	return redirect('/admin/user/%s' % barcode)
