@@ -400,6 +400,11 @@ class TransactionModelTests(GenericStreckTestCase):
         rv = self.app.post('/user/nobody/buy', data=dict(barcode='0012345678905'), follow_redirects=True)
         assert b'Användaren existerar inte!' in rv.data
 
+    def test_buy_missing_product(self):
+        """ Test buying something for a missing product. """
+        rv = self.app.post('/user/john/buy', data=dict(barcode='nothing'), follow_redirects=True)
+        assert b'Produkten existerar inte!' in rv.data
+
     def test_buy_product_is_user(self):
         """ Test buying something that is a user. """
         rv = self.app.post('/user/john/buy', data=dict(barcode='jane'))
@@ -523,10 +528,76 @@ class TransactionModelTests(GenericStreckTestCase):
             assert streck.models.user.User('john').debt() == 10.0 # by design apparently?
 
 
+class JobbmatFeatureTests(GenericStreckTestCase):
+    """ Test the jobbmat feature. """
+    TESTPRODUCT_GOOD = dict(barcode='0012345678905', name='Allowed product', price=5.0)
+    TESTPRODUCT_BAD = dict(barcode='4011200296903', name='Disllowed product', price=10.0)
+    CATEGORIES = {1: b'Öl', 2: b'Ickeöl'} # These are hardcoded :(
+
+    def setUp(self):
+        """ Set up test case.
+
+        Inserts two products into the database and sets the allowed jobbmat category
+        """
+        GenericStreckTestCase.setUp(self)
+    	with app.test_request_context():
+            app.preprocess_request()
+            streck.models.product.Product.add(self.TESTPRODUCT_GOOD['barcode'], self.TESTPRODUCT_GOOD['name'], self.TESTPRODUCT_GOOD['price'], 2, '../img/NoneProduct.png')
+            streck.models.product.Product.add(self.TESTPRODUCT_BAD['barcode'], self.TESTPRODUCT_BAD['name'], self.TESTPRODUCT_BAD['price'], 1, '../img/NoneProduct.png')
+        app.config['ALLOWED_JOBBMAT_CATEGORIES'] = [(self.CATEGORIES[2]).decode('utf-8')]
+
+    def test_buy_allowed(self):
+        """ Test booking something allowed as jobbmat. """
+        # Make sure we can buy the product
+        self.app.post('/user/%s/buy' % app.config['JOBBMAT_BARCODE'], data=dict(barcode=self.TESTPRODUCT_GOOD['barcode']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User(app.config['JOBBMAT_BARCODE']).debt() == self.TESTPRODUCT_GOOD['price']
+
+        # Make sure it appears on the user page
+        rv = self.app.get('/user/%s' % app.config['JOBBMAT_BARCODE'], follow_redirects=True)
+        assert self.TESTPRODUCT_GOOD['name'] in rv.data
+
+    def test_buy_not_allowed(self):
+        """ Test booking something disallowed as jobbmat. """
+        # Make sure we can't buy the product
+        self.app.post('/user/%s/buy' % app.config['JOBBMAT_BARCODE'], data=dict(barcode=self.TESTPRODUCT_BAD['barcode']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User(app.config['JOBBMAT_BARCODE']).debt() == 0.0
+
+        # Make sure it appears on the user page
+        rv = self.app.get('/user/%s' % app.config['JOBBMAT_BARCODE'], follow_redirects=True)
+        assert self.TESTPRODUCT_BAD['name'] not in rv.data
+
+    def test_remove_allowed(self):
+        """ Test removing some jobbmat. """
+        # Make sure we can remove the product
+        self.app.post('/user/%s/buy' % app.config['REMOVE_JOBBMAT_BARCODE'], data=dict(barcode=self.TESTPRODUCT_GOOD['barcode']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            # Note negative sign. Removing even if there was no initial purchase is allowed by design
+            assert streck.models.user.User(app.config['JOBBMAT_BARCODE']).debt() == -self.TESTPRODUCT_GOOD['price']
+
+        # Make sure it appears on the user page
+        rv = self.app.get('/user/%s' % app.config['JOBBMAT_BARCODE'], follow_redirects=True)
+        assert self.TESTPRODUCT_GOOD['name'] in rv.data
+
+    def test_remove_not_allowed(self):
+        """ Test removing something disallowed as jobbmat. """
+        # Make sure we can't remove the product
+        self.app.post('/user/%s/buy' % app.config['REMOVE_JOBBMAT_BARCODE'], data=dict(barcode=self.TESTPRODUCT_BAD['barcode']), follow_redirects=True)
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.user.User(app.config['JOBBMAT_BARCODE']).debt() == 0.0
+
+        # Make sure it appears on the user page
+        rv = self.app.get('/user/%s' % app.config['JOBBMAT_BARCODE'], follow_redirects=True)
+        assert self.TESTPRODUCT_BAD['name'] not in rv.data
+
+
 # TODO: StatsModelTests
-# TODO: AdminExportModelTests
-# TODO: JobbmatFeatureTests
-# TODO: SpecialBarcodeTests
+# TODO: AdminExportControllerTests
 
 # Run tests
 if __name__ == '__main__':
