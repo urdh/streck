@@ -4,11 +4,14 @@ import os
 import shutil
 import unittest
 import tempfile
+from datetime import datetime, timedelta
 from StringIO import StringIO
 from binascii import unhexlify
 from flask import g
 from streck import app
 import streck.models
+
+# TODO: refactoring to remove some of the duplicate code?
 
 class GenericStreckTestCase(unittest.TestCase):
     """ Generic test case class, handling database setup. """
@@ -31,6 +34,13 @@ class GenericStreckTestCase(unittest.TestCase):
         os.close(self.db_fd)
         os.unlink(streck.app.config['DATABASE'])
         shutil.rmtree(streck.app.config['UPLOAD_FOLDER'])
+
+    @classmethod
+    def dump_table(cls, cursor, table):
+        """ Dump a SQLite table to stdout (for debugging). """
+        cursor.execute("select * from %s" % table)
+        for row in cursor:
+            print row
 
 
 class StaticPageTests(GenericStreckTestCase):
@@ -601,8 +611,148 @@ class JobbmatFeatureTests(GenericStreckTestCase):
         assert self.TESTPRODUCT_BAD['name'] not in rv.data
 
 
-# TODO: StatsModelTests
-# TODO: AdminExportControllerTests
+class StatsModelTests(GenericStreckTestCase):
+    """ Test the :class:Stats model. """
+
+    def setUp(self):
+        """ Set up test case.
+
+        Inserts two products and two users into the database
+        """
+        GenericStreckTestCase.setUp(self)
+    	with app.test_request_context():
+            app.preprocess_request()
+            self.P_A = streck.models.product.Product.add('BC_P_A', 'Prod. A', 1.0, 2, '')
+            self.P_B = streck.models.product.Product.add('BC_P_B', 'Prod. B', 9.0, 1, '')
+            self.P_N = streck.models.product.Product(None)
+            self.U_A = streck.models.user.User.add('BC_U_A', 'User A', '')
+            self.U_B = streck.models.user.User.add('BC_U_B', 'User B', '')
+            self.U_J = streck.models.user.User(app.config['JOBBMAT_BARCODE'])
+
+    def do_transactions(self, copies, user, product, date=datetime.now(), notes='', price=1.0):
+        """ Add a transaction at a specific date, with optional notes. """
+    	with app.app_context():
+            streck.models.setup_db()
+            price = product.price() or price
+            for _ in range(copies):
+                g.db.execute('insert into transactions values (null, ?, ?, ?, ?, ?)', [date.isoformat(), user.id(), product.id(), price, notes])
+            g._db.commit()
+            streck.models.close_db(None)
+
+    def test_top_product(self):
+        """ Tests :meth:Stats.top_product. """
+        self.do_transactions(20, self.U_J, self.P_A) # Jobbmat, not counted
+        self.do_transactions(2,  self.U_A, self.P_A)
+        self.do_transactions(10, self.U_A, self.P_B)
+
+        # Make sure the top product is correct
+        with app.test_request_context():
+            app.preprocess_request()
+            expect_name = self.P_B.name()
+            top_name, count = streck.models.stats.Stats.top_product()
+            assert top_name == expect_name
+            assert count == 10
+
+    def test_top_user_debt(self):
+        """ Tests :meth:Stats.top_user_debt and :meth:Stats.toplist_user_now. """
+        self.do_transactions(20, self.U_J, self.P_A) # Jobbmat, not counted
+        self.do_transactions(2,  self.U_B, self.P_B)
+        self.do_transactions(10, self.U_A, self.P_A)
+
+        # Make sure the top user is correct
+        with app.test_request_context():
+            app.preprocess_request()
+            assert streck.models.stats.Stats.top_user_debt().id() == self.U_B.id()
+            toplist = streck.models.stats.Stats.toplist_user_now()
+            assert [u.id() for u in toplist] == [self.U_B.id(), self.U_A.id()]
+            assert [u.debt() for u in toplist] == [18.0, 10.0]
+
+    def test_top_user_total(self):
+        """ Tests :meth:Stats.top_user_total and :meth:Stats.toplist_user_alltime. """
+        self.do_transactions(20, self.U_J, self.P_A) # Jobbmat, not counted
+        self.do_transactions(2,  self.U_B, self.P_A)
+        self.do_transactions(10, self.U_A, self.P_A)
+
+        # Make sure the total top user is correct
+        with app.test_request_context():
+            app.preprocess_request()
+            expect_name = self.U_A.name()
+            top_name, total = streck.models.stats.Stats.top_user_total()
+            assert expect_name == top_name
+            assert total == 10.0
+            toplist = streck.models.stats.Stats.toplist_user_alltime()
+            assert [v[0] for v in toplist] == [self.U_J.name(), self.U_A.name(), self.U_B.name()]
+            assert [v[1] for v in toplist] == [20, 10, 2]
+            assert [v[2] for v in toplist] == [20.0, 10.0, 2.0]
+
+        # Make sure it's still correct after a debt payment
+        with app.test_request_context():
+            app.preprocess_request()
+            self.do_transactions(1, self.U_A, self.P_N, notes='paid', price=-self.U_A.debt())
+            self.do_transactions(1, self.U_B, self.P_N, notes='paid', price=-self.U_B.debt())
+        with app.test_request_context():
+            app.preprocess_request()
+            expect_name = self.U_A.name()
+            top_name, total = streck.models.stats.Stats.top_user_total()
+            assert expect_name == top_name
+            assert total == 10.0
+            toplist = streck.models.stats.Stats.toplist_user_alltime()
+            assert [v[0] for v in toplist] == [self.U_J.name(), self.U_A.name(), self.U_B.name()]
+            assert [v[1] for v in toplist] == [20, 10, 2]
+            assert [v[2] for v in toplist] == [20.0, 10.0, 2.0]
+
+        # And after more transactions
+        self.do_transactions(10, self.U_B, self.P_A)
+        self.do_transactions(1,  self.U_A, self.P_A)
+        with app.test_request_context():
+            app.preprocess_request()
+            expect_name = self.U_B.name()
+            top_name, total = streck.models.stats.Stats.top_user_total()
+            assert expect_name == top_name
+            assert total == 12.0
+            toplist = streck.models.stats.Stats.toplist_user_alltime()
+            assert [v[0] for v in toplist] == [self.U_J.name(), self.U_B.name(), self.U_A.name()]
+            assert [v[1] for v in toplist] == [20, 12, 11]
+            assert [v[2] for v in toplist] == [20.0, 12.0, 11.0]
+
+    def test_total_four_weeks(self):
+        pass
+
+    def test_toplist_product(self):
+        pass
+
+    def test_toplist_user(self):
+        pass
+
+    def test_generate_csv(self):
+        pass
+
+
+class AdminExportControllerTests(GenericStreckTestCase):
+    """ Test the administration export feature. """
+
+    def setUp(self):
+        """ Set up test case.
+
+        Inserts two products, two users and some transactions
+        """
+        GenericStreckTestCase.setUp(self)
+    	with app.test_request_context():
+            app.preprocess_request()
+            self.P_A = streck.models.product.Product.add('BC_P_A', 'Prod. A', 1.0, 2, '')
+            self.P_B = streck.models.product.Product.add('BC_P_B', 'Prod. B', 9.0, 1, '')
+            self.P_N = streck.models.product.Product(None)
+            self.U_A = streck.models.user.User.add('BC_U_A', 'User A', '')
+            self.U_B = streck.models.user.User.add('BC_U_B', 'User B', '')
+            self.U_J = streck.models.user.User(app.config['JOBBMAT_BARCODE'])
+            # TODO
+
+    def test_export_list(self):
+        pass
+
+    def test_export_empty(self):
+        pass
+
 
 # Run tests
 if __name__ == '__main__':
