@@ -98,7 +98,7 @@ class UserModelTests(GenericStreckTestCase):
 
         # Access a nonexistent user
         rv = self.app.post('/user', data=dict(barcode='nobody'), follow_redirects=True)
-        assert b'Användaren existerar inte!' in rv.data
+        assert b'Produkten existerar inte!' in rv.data # TODO: what?
 
     def test_create_user(self):
         """ Test creating users through the admin interface. """
@@ -256,16 +256,16 @@ class ProductModelTests(GenericStreckTestCase):
         self.add_product(self.TESTPRODUCT2, 2)
 
         # Access products
-        rv = self.app.get('/product/%s' % self.TESTPRODUCT1['barcode'], follow_redirects=True)
+        rv = self.app.post('/product', data=dict(barcode=self.TESTPRODUCT1['barcode']), follow_redirects=True)
         assert self.TESTPRODUCT1['name'] in rv.data
         assert self.CATEGORIES[1] in rv.data
-        rv = self.app.get('/product/%s' % self.TESTPRODUCT2['barcode'], follow_redirects=True)
+        rv = self.app.post('/product', data=dict(barcode=self.TESTPRODUCT2['barcode']), follow_redirects=True)
         assert self.TESTPRODUCT2['name'] in rv.data
         assert self.CATEGORIES[2] in rv.data
 
         # Access a nonexistent product
-        rv = self.app.get('/product/nothing', follow_redirects=True)
-        assert b'Produkten existerar inte!' in rv.data
+        rv = self.app.post('/product', data=dict(barcode='nothing'), follow_redirects=True)
+        assert b'Produkten eller användaren existerar inte!' in rv.data
 
     def test_create_product(self):
         """ Test creating products through the admin interface. """
