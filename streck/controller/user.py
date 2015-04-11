@@ -13,7 +13,6 @@ def user_is_disabled():
 def user_arrival():
 	u = User(request.form['barcode'])
 	if u.barcode() == app.config['LOGOUT_BARCODE']:
-		flash(u'Du har loggats ut!')
 		return redirect('/')
 	if not u.exists():
 		return redirect('/product/%s' % u.barcode())

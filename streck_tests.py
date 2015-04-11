@@ -83,16 +83,21 @@ class UserModelTests(GenericStreckTestCase):
         self.add_user(self.TESTUSER)
 
         # Access a normal user
-        rv = self.app.get('/user/%s' % self.TESTUSER['barcode'], follow_redirects=True)
+        rv = self.app.post('/user', data=dict(barcode=self.TESTUSER['barcode']), follow_redirects=True)
         assert self.TESTUSER['name'] in rv.data
 
         # Access a disabled user
         self.app.get('/admin/user/%s/disable' % self.TESTUSER['barcode'], follow_redirects=True)
-        rv = self.app.get('/user/%s' % self.TESTUSER['barcode'], follow_redirects=True)
+        rv = self.app.post('/user', data=dict(barcode=self.TESTUSER['barcode']), follow_redirects=True)
         assert b'<h1>Nej!</h1>' in rv.data
 
+        # Access the "logout" user
+        rv = self.app.post('/user', data=dict(barcode=app.config['LOGOUT_BARCODE']))
+        assert rv.status_code == 302
+        assert 'http://localhost/' in rv.headers.get('Location', '')
+
         # Access a nonexistent user
-        rv = self.app.get('/user/nobody', follow_redirects=True)
+        rv = self.app.post('/user', data=dict(barcode='nobody'), follow_redirects=True)
         assert b'Användaren existerar inte!' in rv.data
 
     def test_create_user(self):
