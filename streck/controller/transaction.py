@@ -25,6 +25,7 @@ def transaction_arrival(user):
 	if p.barcode() == app.config['UNDO_BARCODE']:
 		return redirect('/user/%s/undo' % u.barcode())
 	if not p.exists():
+		flash(u'Produkten existerar inte!')
 		return redirect('/user/%s' % u.barcode())
 	return redirect('/user/%s/buy/%s' % (u.barcode(), p.barcode()))
 

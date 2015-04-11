@@ -11,16 +11,15 @@ def user_is_disabled():
 
 @app.route('/user',methods=['POST'])
 def user_arrival():
-	if request.method == 'POST':
-		u = User(request.form['barcode'])
-		if u.barcode() == app.config['LOGOUT_BARCODE']:
-			return redirect('/')
-		if not u.exists():
-			return redirect('/product/%s' % u.barcode())
-		if u.disabled():
-			return redirect('/disabled')
-		return redirect('/user/%s' % u.barcode())
-	return redirect('/')
+	u = User(request.form['barcode'])
+	if u.barcode() == app.config['LOGOUT_BARCODE']:
+		flash(u'Du har loggats ut!')
+		return redirect('/')
+	if not u.exists():
+		return redirect('/product/%s' % u.barcode())
+	if u.disabled():
+		return redirect('/disabled')
+	return redirect('/user/%s' % u.barcode())
 
 @app.route('/user/<barcode>')
 def show_user(barcode):
