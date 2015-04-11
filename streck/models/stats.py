@@ -13,10 +13,7 @@ class Stats(object):
 
 	@classmethod
 	def top_user_debt(cls):
-		users = User.all()
-		users = [user for user in users if user.barcode() != app.config['JOBBMAT_BARCODE']]
-		users.sort(key=lambda u: u.debt(), reverse=True)
-		return users[0]
+		return cls.toplist_user_now()[0]
 
 	@classmethod
 	def top_user_total(cls):
