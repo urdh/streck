@@ -2,6 +2,7 @@
 
 [![Travis CI](https://img.shields.io/travis/urdh/streck.svg)](https://travis-ci.org/urdh/streck)
 [![Coveralls](https://img.shields.io/coveralls/urdh/streck.svg)](https://coveralls.io/r/urdh/streck)
+[![Code Health](https://landscape.io/github/urdh/streck/master/landscape.svg?style=flat)](https://landscape.io/github/urdh/streck/master)
 [![Requires](https://img.shields.io/requires/github/urdh/streck.svg)](https://requires.io/github/urdh/streck/requirements)
 [![Github release](https://img.shields.io/github/release/urdh/streck.svg)](https://github.com/urdh/streck/releases)
 [![License](https://img.shields.io/badge/license-ISC-blue.svg)](https://github.com/urdh/streck/blob/master/LICENSE)
