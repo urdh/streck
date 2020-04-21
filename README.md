@@ -1,11 +1,11 @@
 # streck
 
-[![Travis CI](https://img.shields.io/travis/urdh/streck/master.svg)](https://travis-ci.org/urdh/streck)
-[![Coveralls](https://img.shields.io/coveralls/urdh/streck/master.svg)](https://coveralls.io/r/urdh/streck)
-[![Code Health](https://landscape.io/github/urdh/streck/master/landscape.svg?style=flat)](https://landscape.io/github/urdh/streck/master)
-[![Requires](https://img.shields.io/requires/github/urdh/streck.svg)](https://requires.io/github/urdh/streck/requirements)
-[![Github release](https://img.shields.io/github/release/urdh/streck.svg)](https://github.com/urdh/streck/releases)
-[![License](https://img.shields.io/badge/license-ISC-blue.svg)](https://github.com/urdh/streck/blob/master/LICENSE)
+[![Travis CI](https://img.shields.io/travis/urdh/streck/master)](https://travis-ci.org/urdh/streck)
+[![Coveralls](https://img.shields.io/coveralls/urdh/streck/master)](https://coveralls.io/r/urdh/streck)
+[![Code Health](https://landscape.io/github/urdh/streck/master/landscape?style=flat)](https://landscape.io/github/urdh/streck/master)
+[![Requires](https://img.shields.io/requires/github/urdh/streck)](https://requires.io/github/urdh/streck/requirements)
+[![Github release](https://img.shields.io/github/release/urdh/streck)](https://github.com/urdh/streck/releases)
+[![License](https://img.shields.io/badge/license-ISC-blue)](https://github.com/urdh/streck/blob/master/LICENSE)
 
 Streck is a system implementing a basic credit-based sales terminal. It is written in Python using the [Flask][flask] framework, but is not intended to be served publically. Instead, it is supposed to run locally and served to a local browser only.
 
